@@ -3,33 +3,35 @@
 var rp = require('request-promise');
 var uuid = require('node-uuid');
 
-function DashBot(apiKey, config) {
-  this.apiKey = apiKey;
+function DashBotPlatform(apiKey, config, platform) {
+  var that = this;
+  that.apiKey = apiKey;
+  that.platform = platform;
   if (config) {
-    this.debug = config.debug;
-    this.serverRoot = config.serverRoot || 'https://bot-analytics.herokuapp.com';
+    that.debug = config.debug;
+    that.serverRoot = config.serverRoot || 'https://bot-analytics.herokuapp.com';
   }
 
-  this.logIncoming = function(data) {
-    if (this.debug) {
-      console.log('Incoming');
+  that.logIncoming = function(data) {
+    if (that.debug) {
+      console.log('Dashbot Incoming:');
       console.log(JSON.stringify(data, null, 2));
     }
     rp({
-      uri: this.serverRoot + '/track?apiKey=' + this.apiKey + '&type=incoming&platform=facebook',
+      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=incoming&platform=' + that.platform,
       method: 'POST',
       json: data
     });
   };
 
-  this.logOutgoing = function(data) {
-    if (this.debug) {
-      console.log('Outgoing');
+  that.logOutgoing = function(data) {
+    if (that.debug) {
+      console.log('Dashbot Outgoing');
       console.log(JSON.stringify(data, null, 2));
     }
     var requestId = uuid.v4();
     rp({
-      uri: this.serverRoot + '/track?apiKey=' + this.apiKey + '&type=outgoing&platform=facebook',
+      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoing&platform=' + that.platform,
       method: 'POST',
       json: {
         requestBody: data,
@@ -39,14 +41,14 @@ function DashBot(apiKey, config) {
     return requestId;
   };
 
-  this.logOutgoingResponse = function(requestId, error, response) {
-    if (this.debug) {
-      console.log('Outgoing response');
+  that.logOutgoingResponse = function(requestId, error, response) {
+    if (that.debug) {
+      console.log('Dashbot Outgoing response');
       console.log(JSON.stringify(error, null, 2));
       console.log(JSON.stringify(response.body, null, 2));
     }
     rp({
-      uri: this.serverRoot + '/track?apiKey=' + this.apiKey + '&type=outgoingResponse&platform=facebook',
+      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoingResponse&platform=' + that.platform,
       method: 'POST',
       json: {
         error: error,
@@ -56,8 +58,22 @@ function DashBot(apiKey, config) {
     });
   };
 
+  // botkit middleware endpoints
+  that.send = function(bot, message, next) {
+    that.logOutgoing(message);
+    next();
+  };
+
+  // botkit middleware endpoints
+  that.receive = function(bot, message, next) {
+    that.logIncoming(message);
+    next();
+  };
 }
 
 module.exports = function(apiKey, debug) {
-  return new DashBot(apiKey, debug);
+  return {
+    facebook: new DashBotPlatform(apiKey, debug, 'facebook'),
+    slack: new DashBotPlatform(apiKey, debug, 'slack')
+  };
 };

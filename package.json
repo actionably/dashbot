@@ -25,6 +25,7 @@
   "homepage": "https://github.com/actionably/dashbot#readme",
   "dependencies": {
     "body-parser": "1.15.0",
+    "botkit": "0.1.1",
     "express": "4.13.4",
     "node-uuid": "^1.4.7",
     "request-promise": "^3.0.0"
