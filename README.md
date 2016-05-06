@@ -73,7 +73,7 @@ Include dashbot.
 var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY).slack;
 ```
 
-After you create your botkit controller simply add send and receive middleware
+After you create your botkit controller simply add a send and receive middleware
 
 ```javascript
 const controller = Botkit.slackbot();
