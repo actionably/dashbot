@@ -1,14 +1,13 @@
 'use strict';
 
-const rp = require('request-promise');
-const uuid = require('node-uuid');
+var rp = require('request-promise');
+var uuid = require('node-uuid');
 
 function DashBot(apiKey, config) {
   this.apiKey = apiKey;
   if (config) {
     this.debug = config.debug;
     this.serverRoot = config.serverRoot || 'https://bot-analytics.herokuapp.com';
-
   }
 
   this.logIncoming = function(data) {
@@ -28,7 +27,7 @@ function DashBot(apiKey, config) {
       console.log('Outgoing');
       console.log(JSON.stringify(data, null, 2));
     }
-    const requestId = uuid.v4();
+    var requestId = uuid.v4();
     rp({
       uri: this.serverRoot + '/track?apiKey=' + this.apiKey + '&type=outgoing&platform=facebook',
       method: 'POST',

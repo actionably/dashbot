@@ -2,10 +2,7 @@
   "name": "dashbot",
   "version": "0.3.2",
   "description": "Analytics for your bot",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/dashbot.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/actionably/dashbot.git"
@@ -13,6 +10,9 @@
   "keywords": [
     "bot",
     "bots",
+    "chatbot",
+    "facebook messenger",
+    "slack",
     "analytics",
     "data",
     "tools"
@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "dependencies": {
-    "node-uuid": "1.4.7",
-    "request-promise": "3.0.0"
+    "body-parser": "1.15.0",
+    "express": "4.13.4",
+    "node-uuid": "^1.4.7",
+    "request-promise": "^3.0.0"
   }
 }
