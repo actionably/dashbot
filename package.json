@@ -27,6 +27,7 @@
     "body-parser": "1.15.0",
     "botkit": "0.1.1",
     "express": "4.13.4",
+    "lodash": "4.12.0",
     "node-uuid": "^1.4.7",
     "request-promise": "^3.0.0"
   }

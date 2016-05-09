@@ -2,6 +2,7 @@
 
 var rp = require('request-promise');
 var uuid = require('node-uuid');
+var _ = require('lodash');
 
 function DashBotPlatform(apiKey, config, platform) {
   var that = this;
@@ -58,15 +59,29 @@ function DashBotPlatform(apiKey, config, platform) {
     });
   };
 
+  that.addTeamInfo = function(bot, message) {
+    var id = _.cloneDeep(bot.identity);
+    delete id.prefs;
+    var teamInfo = _.cloneDeep(bot.team_info);
+    delete teamInfo.prefs;
+    teamInfo.bot = id;
+    return {
+      teamInfo: teamInfo,
+      message: message
+    };
+  };
+
   // botkit middleware endpoints
   that.send = function(bot, message, next) {
-    that.logOutgoing(message);
+    that.logOutgoing(that.addTeamInfo(bot, message));
     next();
   };
 
   // botkit middleware endpoints
   that.receive = function(bot, message, next) {
-    that.logIncoming(message);
+    if (message.type !== 'reconnect_url') {
+      that.logIncoming(that.addTeamInfo(bot, message));
+    }
     next();
   };
 }
