@@ -20,7 +20,7 @@ npm install --save dashbot
 Include dashbot.
 
 ```javascript
-var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY).facebook;
+var dashbot = require('dashbot')(process.env.DASHBOT_API_KEY).facebook;
 ```
 
 Then log whenver your webhook is called
@@ -70,7 +70,7 @@ npm install --save dashbot
 Include dashbot.
 
 ```javascript
-var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY).slack;
+var dashbot = require('dashbot')(process.env.DASHBOT_API_KEY).slack;
 ```
 
 After you create your botkit controller simply add a send and receive middleware
