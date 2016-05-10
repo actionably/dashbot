@@ -9,6 +9,9 @@ function DashBotPlatform(apiKey, config, platform) {
   that.apiKey = apiKey;
   that.platform = platform;
   that.serverRoot = 'https://tracker.dashbot.io';
+  if (!apiKey) {
+    console.error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
+  }
   if (config) {
     that.debug = config.debug;
     that.serverRoot = config.serverRoot || that.serverRoot;
