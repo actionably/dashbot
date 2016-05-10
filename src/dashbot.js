@@ -10,7 +10,7 @@ function DashBotPlatform(apiKey, config, platform) {
   that.platform = platform;
   if (config) {
     that.debug = config.debug;
-    that.serverRoot = config.serverRoot || 'https://bot-analytics.herokuapp.com';
+    that.serverRoot = config.serverRoot || 'https://tracker.dashbot.io';
   }
 
   that.logIncoming = function(data) {
