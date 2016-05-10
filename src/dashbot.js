@@ -8,9 +8,10 @@ function DashBotPlatform(apiKey, config, platform) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = platform;
+  that.serverRoot = 'https://tracker.dashbot.io';
   if (config) {
     that.debug = config.debug;
-    that.serverRoot = config.serverRoot || 'https://tracker.dashbot.io';
+    that.serverRoot = config.serverRoot || that.serverRoot;
   }
 
   that.logIncoming = function(data) {
@@ -86,9 +87,9 @@ function DashBotPlatform(apiKey, config, platform) {
   };
 }
 
-module.exports = function(apiKey, debug) {
+module.exports = function(apiKey, config) {
   return {
-    facebook: new DashBotPlatform(apiKey, debug, 'facebook'),
-    slack: new DashBotPlatform(apiKey, debug, 'slack')
+    facebook: new DashBotPlatform(apiKey, config, 'facebook'),
+    slack: new DashBotPlatform(apiKey, config, 'slack')
   };
 };
