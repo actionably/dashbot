@@ -18,25 +18,27 @@ function DashBotPlatform(apiKey, config, platform) {
   }
 
   that.logIncoming = function(data) {
+    var url = that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=incoming&platform=' + that.platform;
     if (that.debug) {
-      console.log('Dashbot Incoming:');
+      console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
     rp({
-      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=incoming&platform=' + that.platform,
+      uri: url,
       method: 'POST',
       json: data
     });
   };
 
   that.logOutgoing = function(data) {
+    var url = that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoing&platform=' + that.platform;
     if (that.debug) {
-      console.log('Dashbot Outgoing');
+      console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
     var requestId = uuid.v4();
     rp({
-      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoing&platform=' + that.platform,
+      uri: url,
       method: 'POST',
       json: {
         requestBody: data,
@@ -47,13 +49,14 @@ function DashBotPlatform(apiKey, config, platform) {
   };
 
   that.logOutgoingResponse = function(requestId, error, response) {
+    var url = that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoingResponse&platform=' + that.platform;
     if (that.debug) {
-      console.log('Dashbot Outgoing response');
+      console.log('Dashbot Outgoing response: '+url);
       console.log(JSON.stringify(error, null, 2));
       console.log(JSON.stringify(response.body, null, 2));
     }
     rp({
-      uri: that.serverRoot + '/track?apiKey=' + that.apiKey + '&type=outgoingResponse&platform=' + that.platform,
+      uri: url,
       method: 'POST',
       json: {
         error: error,
