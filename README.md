@@ -59,7 +59,7 @@ For a complete example see: [facebook-example.js](https://github.com/actionably/
 
 Dashbot gives you two ways to integrate with slack: 
 1. Via botkit middleware to make plugging into your slack bot easy. 
-1. Without botkit and integrate in with dashbot directly 
+1. Without botkit and integrate with dashbot directly 
 
 ### With Botkit
 
