@@ -13,7 +13,8 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY, {debug:true}).facebook;
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
+  {debug:true, serverRoot: process.env.DASHBOT_SERVER_ROOT}).facebook;
 
 const app = express();
 app.use(bodyParser.json());
@@ -53,6 +54,6 @@ app.post(webHookPath, function(req, res) {
   res.sendStatus(200);
 });
 
-var port = 3000;
+var port = 4000;
 app.listen(port);
 console.log('Facebook webhook available at http://localhost:' + port + webHookPath);
