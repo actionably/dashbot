@@ -1,6 +1,6 @@
 # [Dashbot](http://dashbot.io) - Analytics for your bot
 
-Dashbot gives you easy to access analytics for your bot for free.
+Dashbot gives you easy access to analytics for your bot for free.
 
 Currently we support
 
