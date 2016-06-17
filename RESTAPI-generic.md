@@ -17,7 +17,7 @@ There are two integration points:
 1) When your bot receives a message POST to the following endpoint
 Make sure to set the 'Content-Type' header to 'application/json'
 ```
-    https://track.dashbot.io/track?platform=generic&v=0.6.0&type=incoming&apiKey=<API_KEY>'
+    https://tracker.dashbot.io/track?platform=generic&v=0.6.0&type=incoming&apiKey=<API_KEY>'
 ```
 The data to POST should be in the following format:
 ```
@@ -30,7 +30,7 @@ The data to POST should be in the following format:
 2) When your bot sends a message POST to the following endpoint
 Make sure to set the 'Content-Type' header to 'application/json'
 ```
-    https://track.dashbot.io/track?platform=generic&v=0.6.0&type=outgoing&apiKey=<API_KEY>'
+    https://tracker.dashbot.io/track?platform=generic&v=0.6.0&type=outgoing&apiKey=<API_KEY>'
 ```
 The data to POST should be in the following format:
 ```

@@ -14,14 +14,14 @@ There are three integration points
 Make sure to set the 'Content-Type' header to 'application/json'
 
 ```
-    https://track.dashbot.io/track?platform=slack&v=0.6.0&type=connect&apiKey=<API_KEY>'
+    https://tracker.dashbot.io/track?platform=slack&v=0.6.0&type=connect&apiKey=<API_KEY>'
 ```
 
 2) When you receive a message on the slack websocket POST to dashbot passing botId, teamId, teamName, and message. 
 Make sure to set the 'Content-Type' header to 'application/json'
 
 ```
-    https://track.dashbot.io/track?platform=slack&v=0.6.0&type=incoming&apiKey=<API_KEY>'
+    https://tracker.dashbot.io/track?platform=slack&v=0.6.0&type=incoming&apiKey=<API_KEY>'
 ```
 The data to POST should be in the following format:
 ```
@@ -40,7 +40,7 @@ The data to POST should be in the following format:
 3) When you send a message to slack via the websocket or the chat.postMessage endpoint POST it to dashbot passing botId, teamId, teamName, and message. 
 Make sure to set the 'Content-Type' header to 'application/json'
 ```
-    https://track.dashbot.io/track?platform=slack&v=0.6.0&type=outgoing&apiKey=<API_KEY>'
+    https://tracker.dashbot.io/track?platform=slack&v=0.6.0&type=outgoing&apiKey=<API_KEY>'
 ```
 The data to POST should be in the following format:
 ```
