@@ -42,4 +42,7 @@ The data to POST should be in the following format:
  
 That's it!
 
+For a nodejs example: 
+[generic-example.js](https://github.com/actionably/dashbot/blob/master/src/generic-example.js)
+
 
