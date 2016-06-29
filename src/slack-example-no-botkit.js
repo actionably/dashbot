@@ -8,7 +8,7 @@ if (!process.env.SLACK_BOT_TOKEN) {
 }
 
 const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
-  {serverRoot: process.env.DASHBOT_SERVER_ROOT, debug:true}).slack;
+  {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).slack;
 const request = require('request');
 var WebSocketClient = require('websocket').client;
 

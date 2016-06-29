@@ -12,8 +12,8 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-var serverRoot = process.env.DASHBOT_SERVER_ROOT || 'https://tracker.dashbot.io';
-var url = serverRoot + '/track?platform=generic&v=0.6.0&apiKey=' + process.env.DASHBOT_API_KEY + '&';
+var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
+var url = urlRoot + '?platform=generic&v=0.6.0&apiKey=' + process.env.DASHBOT_API_KEY + '&';
 
 function ask(question) {
   request({

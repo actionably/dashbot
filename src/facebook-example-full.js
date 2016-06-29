@@ -14,7 +14,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
-  {debug:true, serverRoot: process.env.DASHBOT_SERVER_ROOT}).facebook;
+  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
 
 const app = express();
 app.use(bodyParser.json());

@@ -4,17 +4,17 @@ var rp = require('request-promise');
 var uuid = require('node-uuid');
 var _ = require('lodash');
 
-var VERSION = '0.6.0';
+var VERSION = '0.6.2';
 
-function DashBotFacebook(apiKey, serverRoot, debug) {
+function DashBotFacebook(apiKey, urlRoot, debug) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'facebook';
-  that.serverRoot = serverRoot;
+  that.urlRoot = urlRoot;
   that.debug = debug;
 
   that.logIncoming = function(data) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
@@ -28,7 +28,7 @@ function DashBotFacebook(apiKey, serverRoot, debug) {
   };
 
   that.logOutgoing = function(data) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
@@ -45,7 +45,7 @@ function DashBotFacebook(apiKey, serverRoot, debug) {
   };
 
   that.logOutgoingResponse = function(requestId, error, response) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Outgoing response: '+url);
@@ -64,11 +64,11 @@ function DashBotFacebook(apiKey, serverRoot, debug) {
   };
 }
 
-function DashBotSlack(apiKey, serverRoot, debug) {
+function DashBotSlack(apiKey, urlRoot, debug) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'slack';
-  that.serverRoot = serverRoot;
+  that.urlRoot = urlRoot;
   that.debug = debug;
 
   function logIncomingInternal(data) {
@@ -76,7 +76,7 @@ function DashBotSlack(apiKey, serverRoot, debug) {
       // ignore this type.
       return;
     }
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
@@ -90,7 +90,7 @@ function DashBotSlack(apiKey, serverRoot, debug) {
   }
 
   function logOutgoingInternal(data) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
@@ -135,7 +135,7 @@ function DashBotSlack(apiKey, serverRoot, debug) {
   }
 
   that.logConnect = function(data) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=connect&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Connect: ' + url);
@@ -157,7 +157,7 @@ function DashBotSlack(apiKey, serverRoot, debug) {
   };
 
   that.logOutgoingResponse = function(requestId, error, response) {
-    var url = that.serverRoot + '/track?apiKey=' +
+    var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v='+VERSION;
     if (that.debug) {
       console.log('Dashbot Outgoing response: '+url);
@@ -193,13 +193,15 @@ module.exports = function(apiKey, config) {
     throw new Error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
   }
   var serverRoot = 'https://tracker.dashbot.io';
+  var urlRoot = serverRoot + '/track';
   var debug = false;
   if (config) {
     debug = config.debug;
     serverRoot = config.serverRoot || serverRoot;
+    urlRoot = config.urlRoot || serverRoot + '/track';
   }
   return {
-    facebook: new DashBotFacebook(apiKey, serverRoot, debug),
-    slack: new DashBotSlack(apiKey, serverRoot, debug)
+    facebook: new DashBotFacebook(apiKey, urlRoot, debug),
+    slack: new DashBotSlack(apiKey, urlRoot, debug)
   };
 };
