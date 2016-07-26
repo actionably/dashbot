@@ -17,7 +17,13 @@ var url = urlRoot + '?platform=generic&v=0.6.0&apiKey=' + process.env.DASHBOT_AP
 
 function ask(question) {
   request({
-    uri: url+'type=outgoing',
+    uri: process.env.DASHBOT_URL_ROOT,
+    qs : {
+      type: 'outgoing',
+      platform: 'generic',
+      apiKey: process.env.DASHBOT_API_KEY,
+      version: '0.6.0'
+    },
     method: 'POST',
     json: {
       text: question,
@@ -26,7 +32,13 @@ function ask(question) {
   });
   rl.question(question, function(answer) {
     request({
-      uri: url+'type=incoming',
+      uri: process.env.DASHBOT_URL_ROOT,
+      qs : {
+        type: 'incoming',
+        platform: 'generic',
+        apiKey: process.env.DASHBOT_API_KEY,
+        version: '0.6.0'
+      },
       method: 'POST',
       json: {
         text: answer,
