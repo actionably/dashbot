@@ -204,6 +204,8 @@ function DashBotKik(apiKey, urlRoot, debug) {
     that.botHandle = bot;
     that.botHandle.originalSend = bot.send;
     that.botHandle.send = dashBotSend;
+    that.kikUsername = bot.username;
+    that.kikApiKey = bot.apiKey;
   };
   that.logHandler = function(incoming, next) {
     if (!that.botHandle || that.botHandle == null) {
