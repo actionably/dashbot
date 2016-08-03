@@ -204,6 +204,8 @@ function DashBotKik(apiKey, urlRoot, debug) {
     that.botHandle = bot;
     that.botHandle.originalSend = bot.send;
     that.botHandle.send = dashBotSend;
+    that.botHandle.originalBroadcast = bot.broadcast;
+    that.botHandle.broadcast = dashBotBroadcast;
     that.kikUsername = bot.username;
     that.kikApiKey = bot.apiKey;
   };
@@ -222,7 +224,41 @@ function DashBotKik(apiKey, urlRoot, debug) {
       that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient, chatId));
     });
 
-    that.botHandle.originalSend(messages, recipient, chatId);
+    let replyPromise = that.botHandle.originalSend(messages, recipient, chatId);
+
+    return replyPromise.then((data) =>{
+      //data is array of responses
+      //send to dashBot
+      //console.log("send promise", data)
+      return data;
+    })
+  }
+  function dashBotBroadcast(messages, recipients) {
+    if (!!messages && !util.isArray(messages)) {
+      messages = [messages];
+    }
+
+    if (recipients) {
+      if (!!recipients && !util.isArray(recipients)) {
+        recipients = [recipients];
+      }
+
+      recipients.forEach((recipient) => {
+        messages.forEach((message) => {
+          that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient));
+        });
+      });
+    }
+
+    let replyPromise = that.botHandle.originalBroadcast(messages, recipients);
+
+    return replyPromise.then((data) =>{
+      //data is array of responses
+      //send to dashBot
+      //console.log("broadcast promise", data)
+      return data;
+    })
+
   }
 
   function kikPrepareMessage(message, recipient, chatId) {
@@ -239,6 +275,9 @@ function DashBotKik(apiKey, urlRoot, debug) {
     if (chatId) {
       kikMessage.chatId = chatId
     }
+    //if (!kikMessage.id) {
+    //  kikMessage.id = uuid.v4();
+    //}
     return kikMessage;
   }
 
