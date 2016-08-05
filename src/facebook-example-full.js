@@ -28,6 +28,18 @@ app.get(webHookPath, function(req, res) {
   res.send('Error, wrong validation token');
 });
 
+// In a production environment this map should be persisted to the database.
+const pausedUsers = {};
+
+// Endpoint that pauses the bot for a particular user.
+app.post('/pause', function(req, res) {
+  const paused = req.body.paused;
+  const userId = req.body.userId;
+  pausedUsers[userId] = paused;
+  console.log('Setting ' + userId + ' to ' + paused);
+  res.send('worked');
+});
+
 function getMessage(text, payload) {
   if (payload) {
     return {
@@ -140,21 +152,23 @@ app.post(webHookPath, function(req, res) {
                                 messagingEvents[0].postback && messagingEvents[0].postback.payload)) {
     const event = req.body.entry[0].messaging[0];
     const sender = event.sender.id;
-    const text = event.message?event.message.text:null;
-    const payload = event.postback?event.postback.payload:null;
-    const requestData = {
-      url: 'https://graph.facebook.com/v2.6/me/messages',
-      qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
-      method: 'POST',
-      json: {
-        recipient: {id: sender},
-        message: getMessage(text, payload)
-      }
-    };
-    const requestId = dashbot.logOutgoing(requestData);
-    request(requestData, function(error, response, body) {
-      dashbot.logOutgoingResponse(requestId, error, response);
-    });
+    if (!pausedUsers[sender]) {
+      const text = event.message?event.message.text:null;
+      const payload = event.postback?event.postback.payload:null;
+      const requestData = {
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
+        method: 'POST',
+        json: {
+          recipient: {id: sender},
+          message: getMessage(text, payload)
+        }
+      };
+      const requestId = dashbot.logOutgoing(requestData);
+      request(requestData, function(error, response, body) {
+        dashbot.logOutgoingResponse(requestId, error, response);
+      });
+    }
   }
   res.sendStatus(200);
 });
