@@ -35,6 +35,9 @@ app.post(webHookPath, function(req, res) {
     const event = req.body.entry[0].messaging[0];
     const sender = event.sender.id;
     const text = event.message.text;
+    if (event.message.is_echo) {
+      return;
+    }
     const requestData = {
       url: 'https://graph.facebook.com/v2.6/me/messages',
       qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
