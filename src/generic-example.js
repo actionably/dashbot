@@ -12,9 +12,6 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
-var url = urlRoot + '?platform=generic&v=0.6.0&apiKey=' + process.env.DASHBOT_API_KEY + '&';
-
 function ask(question) {
   request({
     uri: process.env.DASHBOT_URL_ROOT,
@@ -22,7 +19,7 @@ function ask(question) {
       type: 'outgoing',
       platform: 'generic',
       apiKey: process.env.DASHBOT_API_KEY,
-      version: '0.6.0'
+      v: '0.7.0-rest'
     },
     method: 'POST',
     json: {
@@ -37,7 +34,7 @@ function ask(question) {
         type: 'incoming',
         platform: 'generic',
         apiKey: process.env.DASHBOT_API_KEY,
-        version: '0.6.0'
+        v: '0.7.0-rest'
       },
       method: 'POST',
       json: {

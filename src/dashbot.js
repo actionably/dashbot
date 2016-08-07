@@ -5,7 +5,7 @@ var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
 
-var VERSION = '0.6.3';
+var VERSION = '0.7.0';
 
 function DashBotFacebook(apiKey, urlRoot, debug) {
   var that = this;
@@ -16,7 +16,7 @@ function DashBotFacebook(apiKey, urlRoot, debug) {
 
   that.logIncoming = function(data) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-npm';
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -28,41 +28,22 @@ function DashBotFacebook(apiKey, urlRoot, debug) {
     });
   };
 
-  that.logOutgoing = function(data) {
+  that.logOutgoing = function(data, responseBody) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-npm';
+    data = _.clone(data);
+    data.reponseBody = responseBody;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    data = _.clone(data);
-    data.requestId = uuid.v4();
     rp({
       uri: url,
       method: 'POST',
       json: data
     });
-    return data.requestId;
   };
 
-  that.logOutgoingResponse = function(requestId, error, response) {
-    var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v=' + VERSION;
-    if (that.debug) {
-      console.log('Dashbot Outgoing response: ' + url);
-      console.log(JSON.stringify(error, null, 2));
-      console.log(JSON.stringify(response.body, null, 2));
-    }
-    rp({
-      uri: url,
-      method: 'POST',
-      json: {
-        error: error,
-        responseBody: response.body,
-        requestId: requestId
-      }
-    });
-  };
 }
 
 function DashBotSlack(apiKey, urlRoot, debug) {
@@ -72,13 +53,13 @@ function DashBotSlack(apiKey, urlRoot, debug) {
   that.urlRoot = urlRoot;
   that.debug = debug;
 
-  function logIncomingInternal(data) {
+  function logIncomingInternal(data, source) {
     if (data.message.type === 'reconnect_url') {
       // ignore this type.
       return;
     }
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -90,9 +71,9 @@ function DashBotSlack(apiKey, urlRoot, debug) {
     });
   }
 
-  function logOutgoingInternal(data) {
+  function logOutgoingInternal(data, source) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -137,7 +118,7 @@ function DashBotSlack(apiKey, urlRoot, debug) {
 
   that.logConnect = function(data) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=connect&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=connect&platform=' + that.platform + '&v=' + VERSION + '-npm';
     if (that.debug) {
       console.log('Dashbot Connect: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -150,16 +131,16 @@ function DashBotSlack(apiKey, urlRoot, debug) {
   };
 
   that.logIncoming = function(bot, team, message) {
-    return logIncomingInternal(addTeamInfoNoBotkit(bot, team, message));
+    return logIncomingInternal(addTeamInfoNoBotkit(bot, team, message), 'npm');
   };
 
   that.logOutgoing = function(bot, team, message) {
-    return logOutgoingInternal(addTeamInfoNoBotkit(bot, team, message));
+    return logOutgoingInternal(addTeamInfoNoBotkit(bot, team, message), 'npm');
   };
 
   that.logOutgoingResponse = function(requestId, error, response) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v=' + VERSION + '-npm';
     if (that.debug) {
       console.log('Dashbot Outgoing response: ' + url);
       console.log(JSON.stringify(error, null, 2));
@@ -178,13 +159,13 @@ function DashBotSlack(apiKey, urlRoot, debug) {
 
   // botkit middleware endpoints
   that.send = function(bot, message, next) {
-    logOutgoingInternal(addTeamInfo(bot, message));
+    logOutgoingInternal(addTeamInfo(bot, message), 'botkit');
     next();
   };
 
   // botkit middleware endpoints
   that.receive = function(bot, message, next) {
-    logIncomingInternal(addTeamInfo(bot, message));
+    logIncomingInternal(addTeamInfo(bot, message), 'botkit');
     next();
   };
 }
@@ -209,7 +190,12 @@ function DashBotKik(apiKey, urlRoot, debug) {
     if (!that.botHandle || that.botHandle == null) {
       throw new Error('YOU MUST SUPPLY THE BOT OBJECT TO DASHBOT!');
     }
-    that.logIncoming(incoming.bot.apiKey, incoming.bot.username, incoming._state);
+    var data = {
+      apiKey: incoming.bot.apiKey,
+      username: incoming.bot.username,
+      message: incoming._state
+    };
+    internalLogIncoming(data, 'kiknpm');
     next();
   };
   function dashBotSend(messages, recipient, chatId) {
@@ -217,7 +203,12 @@ function DashBotKik(apiKey, urlRoot, debug) {
       messages = [messages];
     }
     _.each(messages, function(message) {
-      that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient, chatId));
+      var data = {
+        apiKey: that.kikApiKey,
+        username: that.kikUsername,
+        message: kikPrepareMessage(message, recipient, chatId)
+      };
+      internalLogOutgoing(data, 'kiknpm');
     });
 
     that.botHandle.originalSend(messages, recipient, chatId);
@@ -240,9 +231,9 @@ function DashBotKik(apiKey, urlRoot, debug) {
     return kikMessage;
   }
 
-  function internalLogIncoming(data) {
+  function internalLogIncoming(data, source) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -254,14 +245,13 @@ function DashBotKik(apiKey, urlRoot, debug) {
     });
   }
 
-  function internalLogOutgoing(data) {
+  function internalLogOutgoing(data, source) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION;
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    data = _.clone(data);
     rp({
       uri: url,
       method: 'POST',
@@ -275,7 +265,7 @@ function DashBotKik(apiKey, urlRoot, debug) {
       username: botUsername,
       message: message
     };
-    internalLogIncoming(data);
+    internalLogIncoming(data, 'npm');
   };
 
   that.logOutgoing = function(kikApiKey, botUsername, message) {
@@ -284,7 +274,7 @@ function DashBotKik(apiKey, urlRoot, debug) {
       username: botUsername,
       message: message
     };
-    internalLogOutgoing(data);
+    internalLogOutgoing(data, 'npm');
   };
 }
 

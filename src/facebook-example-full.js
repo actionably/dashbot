@@ -164,9 +164,8 @@ app.post(webHookPath, function(req, res) {
           message: getMessage(text, payload)
         }
       };
-      const requestId = dashbot.logOutgoing(requestData);
       request(requestData, function(error, response, body) {
-        dashbot.logOutgoingResponse(requestId, error, response);
+        dashbot.logOutgoing(requestData, response.body);
       });
     }
   }
