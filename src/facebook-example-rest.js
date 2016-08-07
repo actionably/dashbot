@@ -10,13 +10,16 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
   throw new Error('"FACEBOOK_PAGE_TOKEN" environment variable must be defined');
 }
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
-  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
+var express = require('express');
+var bodyParser = require('body-parser');
+var request = require('request');
 
-const app = express();
+var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
+var apiKey = process.env.DASHBOT_API_KEY;
+var version = '0.6.0';
+var debug = true;
+
+var app = express();
 app.use(bodyParser.json());
 
 var webHookPath = '/facebook/receive/';
@@ -29,16 +32,23 @@ app.get(webHookPath, function(req, res) {
 });
 
 app.post(webHookPath, function(req, res) {
-  dashbot.logIncoming(req.body);
-  const messagingEvents = req.body.entry[0].messaging;
+  var url = urlRoot + '?apiKey=' + apiKey + '&type=incoming&platform=facebook&v=' + version;
+  var data = req.body;
+  if (debug) {
+    console.log('Dashbot Incoming: ' + url);
+    console.log(JSON.stringify(data, null, 2));
+  }
+  request({
+    uri: url,
+    method: 'POST',
+    json: data
+  });
+  var messagingEvents = req.body.entry[0].messaging;
   if (messagingEvents.length && messagingEvents[0].message && messagingEvents[0].message.text) {
-    const event = req.body.entry[0].messaging[0];
-    const sender = event.sender.id;
-    const text = event.message.text;
-    if (event.message.is_echo) {
-      return;
-    }
-    const requestData = {
+    var event = req.body.entry[0].messaging[0];
+    var sender = event.sender.id;
+    var text = event.message.text;
+    var requestData = {
       url: 'https://graph.facebook.com/v2.6/me/messages',
       qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
       method: 'POST',
@@ -50,9 +60,19 @@ app.post(webHookPath, function(req, res) {
         }
       }
     };
-    const requestId = dashbot.logOutgoing(requestData);
-    request(requestData, function(error, response, body) {
-      dashbot.logOutgoingResponse(requestId, error, response);
+    request(requestData, function(error, response) {
+      var url = urlRoot + '?apiKey=' + apiKey + '&type=outgoing&platform=facebook&v=' + version;
+      requestData.responseBody = response.body;
+      console.log('response', JSON.stringify(response, null, 2));
+      if (debug) {
+        console.log('Dashbot outgoing: ' + url);
+        console.log(JSON.stringify(requestData, null, 2));
+      }
+      request({
+        uri: url,
+        method: 'POST',
+        json: requestData
+      });
     });
   }
   res.sendStatus(200);
