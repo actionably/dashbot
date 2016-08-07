@@ -185,6 +185,10 @@ function DashBotKik(apiKey, urlRoot, debug) {
     that.botHandle = bot;
     that.botHandle.originalSend = bot.send;
     that.botHandle.send = dashBotSend;
+    that.botHandle.originalBroadcast = bot.broadcast;
+    that.botHandle.broadcast = dashBotBroadcast;
+    that.kikUsername = bot.username;
+    that.kikApiKey = bot.apiKey;
   };
   that.logHandler = function(incoming, next) {
     if (!that.botHandle || that.botHandle == null) {
@@ -229,6 +233,27 @@ function DashBotKik(apiKey, urlRoot, debug) {
       kikMessage.chatId = chatId
     }
     return kikMessage;
+  }
+
+  function dashBotBroadcast(messages, recipients) {
+    if (!!messages && !util.isArray(messages)) {
+      messages = [messages];
+    }
+
+    if (recipients) {
+      if (!!recipients && !util.isArray(recipients)) {
+        recipients = [recipients];
+      }
+
+      recipients.forEach((recipient) => {
+        messages.forEach((message) => {
+          that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient));
+        });
+      });
+    }
+
+    return that.botHandle.originalBroadcast(messages, recipients);
+
   }
 
   function internalLogIncoming(data, source) {
