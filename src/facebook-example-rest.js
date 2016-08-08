@@ -16,7 +16,7 @@ var request = require('request');
 
 var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
 var apiKey = process.env.DASHBOT_API_KEY;
-var version = '0.6.0';
+var version = '0.7.0-rest';
 var debug = true;
 
 var app = express();

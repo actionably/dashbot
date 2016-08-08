@@ -54,13 +54,9 @@ request('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, fu
           };
 
           // Tell dashbot about your response
-          var id = dashbot.logOutgoing(bot, team, reply);
+          dashbot.logOutgoing(bot, team, reply);
 
-          request.post('https://slack.com/api/chat.postMessage?token='+process.env.SLACK_BOT_TOKEN,
-            function (error, response) {
-              // tell dashbot if there are errors.
-              dashbot.logOutgoingResponse(id, error, response);
-            }).form(reply);
+          request.post('https://slack.com/api/chat.postMessage?token='+process.env.SLACK_BOT_TOKEN).form(reply);
         }
       }
 
