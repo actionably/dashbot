@@ -138,25 +138,6 @@ function DashBotSlack(apiKey, urlRoot, debug) {
     return logOutgoingInternal(addTeamInfoNoBotkit(bot, team, message), 'npm');
   };
 
-  that.logOutgoingResponse = function(requestId, error, response) {
-    var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoingResponse&platform=' + that.platform + '&v=' + VERSION + '-npm';
-    if (that.debug) {
-      console.log('Dashbot Outgoing response: ' + url);
-      console.log(JSON.stringify(error, null, 2));
-      console.log(JSON.stringify(response.body, null, 2));
-    }
-    rp({
-      uri: url,
-      method: 'POST',
-      json: {
-        error: error,
-        responseBody: response.body,
-        requestId: requestId
-      }
-    });
-  };
-
   // botkit middleware endpoints
   that.send = function(bot, message, next) {
     logOutgoingInternal(addTeamInfo(bot, message), 'botkit');
