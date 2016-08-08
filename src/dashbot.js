@@ -226,8 +226,8 @@ function DashBotKik(apiKey, urlRoot, debug) {
         recipients = [recipients];
       }
 
-      recipients.forEach((recipient) => {
-        messages.forEach((message) => {
+      recipients.forEach(function (recipient) {
+        messages.forEach(function (message) {
           that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient));
         });
       });
