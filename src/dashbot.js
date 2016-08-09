@@ -5,7 +5,7 @@ var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
 
-var VERSION = '0.7.0';
+var VERSION = '0.7.1';
 
 function DashBotFacebook(apiKey, urlRoot, debug) {
   var that = this;
