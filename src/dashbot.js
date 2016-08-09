@@ -5,7 +5,7 @@ var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
 
-var VERSION = '0.7.0';
+var VERSION = '0.7.1';
 
 function DashBotFacebook(apiKey, urlRoot, debug) {
   var that = this;
@@ -44,6 +44,17 @@ function DashBotFacebook(apiKey, urlRoot, debug) {
     });
   };
 
+  // botkit middleware endpoints
+  that.send = function(bot, message, next) {
+    logOutgoingInternal(addTeamInfo(bot, message), 'botkit');
+    next();
+  };
+
+  // botkit middleware endpoints
+  that.receive = function(bot, message, next) {
+    logIncomingInternal(addTeamInfo(bot, message), 'botkit');
+    next();
+  };
 }
 
 function DashBotSlack(apiKey, urlRoot, debug) {
