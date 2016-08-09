@@ -32,7 +32,7 @@ function DashBotFacebook(apiKey, urlRoot, debug) {
     var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-npm';
     data = _.clone(data);
-    data.reponseBody = responseBody;
+    data.responseBody = responseBody;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
