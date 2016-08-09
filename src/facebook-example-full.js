@@ -147,7 +147,6 @@ function getMessage(text, payload) {
 app.post(webHookPath, function(req, res) {
   dashbot.logIncoming(req.body);
   const messagingEvents = req.body.entry[0].messaging;
-  console.log(messagingEvents);
   if (messagingEvents.length && (messagingEvents[0].message && messagingEvents[0].message.text ||
                                 messagingEvents[0].postback && messagingEvents[0].postback.payload)) {
     const event = req.body.entry[0].messaging[0];
