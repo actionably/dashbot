@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "lodash": "4.12.0",
-    "node-uuid": "^1.4.7",
+    "node-uuid": "1.4.7",
     "request": "2.72.0",
-    "request-promise": "^3.0.0"
+    "request-promise": "3.0.0"
   }
 }

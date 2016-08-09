@@ -4,65 +4,130 @@ var rp = require('request-promise');
 var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
+const cJSON = require('circular-json');
 
-var VERSION = '0.7.1';
+var VERSION = '0.7.2';
 
-function DashBotFacebook(apiKey, urlRoot, debug) {
+function makeRequest(data, printErrors) {
+  if (printErrors) {
+    rp(data);
+  } else {
+    rp(data).catch(function(err) {
+      // ignore
+    });
+  }
+}
+
+function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'facebook';
   that.urlRoot = urlRoot;
   that.debug = debug;
+  that.printErrors = printErrors;
 
-  that.logIncoming = function(data) {
+  function logIncomingInternal(data, source) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-npm';
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   };
 
-  that.logOutgoing = function(data, responseBody) {
+  function logOutgoingInternal(data, responseBody, source) {
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-npm';
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     data = _.clone(data);
     data.responseBody = responseBody;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   };
 
-  // botkit middleware endpoints
-  that.send = function(bot, message, next) {
-    logOutgoingInternal(addTeamInfo(bot, message), 'botkit');
-    next();
+  that.logIncoming = function(data) {
+    logIncomingInternal(data, 'npm');
   };
+
+  that.logOutgoing = function(data, responseBody) {
+    logOutgoingInternal(data, responseBody, 'npm');
+  };
+
+  function getAndRemove(obj, prop) {
+    var temp = obj[prop];
+    delete obj[prop];
+    return temp;
+  }
+
+  function botkitTransformIncoming(bot, message) {
+    var sendMessage = _.cloneDeep(message);
+    var user = getAndRemove(sendMessage, 'user');
+    var timestamp = getAndRemove(sendMessage, 'timestamp');
+    delete sendMessage.channel;
+    return {
+      object: 'page',
+      entry: [{
+        time: timestamp,
+        messaging: [{
+          sender: {
+            id: user
+          },
+          timestamp: timestamp,
+          message: sendMessage
+        }]
+      }]
+    };
+  }
+
+  function botkitTransformOutgoing(bot, message) {
+    var sendMessage = _.cloneDeep(message);
+    var channel = getAndRemove(sendMessage, 'channel');
+    return {
+      qs: {
+        access_token: bot.botkit.config.access_token
+      },
+      json: {
+        recipient: {
+          id: channel
+        },
+        message: sendMessage
+      }
+    };
+  }
 
   // botkit middleware endpoints
   that.receive = function(bot, message, next) {
-    logIncomingInternal(addTeamInfo(bot, message), 'botkit');
+    logIncomingInternal(botkitTransformIncoming(bot, message), 'botkit');
     next();
   };
+
+
+  // botkit middleware endpoints
+  that.send = function(bot, message, next) {
+    logOutgoingInternal(botkitTransformOutgoing(bot, message), null, 'botkit');
+    next();
+  };
+
 }
 
-function DashBotSlack(apiKey, urlRoot, debug) {
+function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'slack';
   that.urlRoot = urlRoot;
   that.debug = debug;
+  that.printErrors = printErrors;
 
   function logIncomingInternal(data, source) {
     if (data.message.type === 'reconnect_url') {
@@ -75,11 +140,11 @@ function DashBotSlack(apiKey, urlRoot, debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   }
 
   function logOutgoingInternal(data, source) {
@@ -91,11 +156,11 @@ function DashBotSlack(apiKey, urlRoot, debug) {
     }
     data = _.clone(data);
     data.requestId = uuid.v4();
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
     return data.requestId;
   }
 
@@ -134,11 +199,11 @@ function DashBotSlack(apiKey, urlRoot, debug) {
       console.log('Dashbot Connect: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   };
 
   that.logIncoming = function(bot, team, message) {
@@ -162,12 +227,13 @@ function DashBotSlack(apiKey, urlRoot, debug) {
   };
 }
 
-function DashBotKik(apiKey, urlRoot, debug) {
+function DashBotKik(apiKey, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'kik';
   that.urlRoot = urlRoot;
   that.debug = debug;
+  that.printErrors = printErrors;
 
   that.botHandle = null;
   that.kikUsername = null;
@@ -255,11 +321,11 @@ function DashBotKik(apiKey, urlRoot, debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   }
 
   function internalLogOutgoing(data, source) {
@@ -269,11 +335,11 @@ function DashBotKik(apiKey, urlRoot, debug) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    rp({
+    makeRequest({
       uri: url,
       method: 'POST',
       json: data
-    });
+    }, that.printErrors);
   }
 
   that.logIncoming = function(kikApiKey, botUsername, message) {
@@ -302,14 +368,18 @@ module.exports = function(apiKey, config) {
   var serverRoot = 'https://tracker.dashbot.io';
   var urlRoot = serverRoot + '/track';
   var debug = false;
+  var printErrors = true;
   if (config) {
     debug = config.debug;
     serverRoot = config.serverRoot || serverRoot;
     urlRoot = config.urlRoot || serverRoot + '/track';
+    if (config.printErrors !== undefined) {
+      printErrors = config.printErrors;
+    }
   }
   return {
-    facebook: new DashBotFacebook(apiKey, urlRoot, debug),
-    slack: new DashBotSlack(apiKey, urlRoot, debug),
-    kik: new DashBotKik(apiKey, urlRoot, debug)
+    facebook: new DashBotFacebook(apiKey, urlRoot, debug, printErrors),
+    slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
+    kik: new DashBotKik(apiKey, urlRoot, debug, printErrors)
   };
 };
