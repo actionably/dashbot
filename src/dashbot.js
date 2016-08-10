@@ -4,7 +4,6 @@ var rp = require('request-promise');
 var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
-const cJSON = require('circular-json');
 
 var VERSION = '0.7.2';
 
