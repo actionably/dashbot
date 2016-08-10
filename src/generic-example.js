@@ -6,6 +6,7 @@ if (!process.env.DASHBOT_API_KEY) {
 
 var request = require('request');
 var readline = require('readline');
+var version = '0.7.3-rest';
 
 var rl = readline.createInterface({
   input: process.stdin,
@@ -19,7 +20,7 @@ function ask(question) {
       type: 'outgoing',
       platform: 'generic',
       apiKey: process.env.DASHBOT_API_KEY,
-      v: '0.7.0-rest'
+      v: version
     },
     method: 'POST',
     json: {
@@ -34,7 +35,7 @@ function ask(question) {
         type: 'incoming',
         platform: 'generic',
         apiKey: process.env.DASHBOT_API_KEY,
-        v: '0.7.0-rest'
+        v: version
       },
       method: 'POST',
       json: {

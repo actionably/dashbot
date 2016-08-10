@@ -5,7 +5,7 @@ var uuid = require('node-uuid');
 var _ = require('lodash');
 const util = require('util');
 
-var VERSION = '0.7.2';
+var VERSION = '0.7.3';
 
 function makeRequest(data, printErrors) {
   if (printErrors) {
