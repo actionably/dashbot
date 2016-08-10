@@ -263,7 +263,8 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
     if (!!messages && !util.isArray(messages)) {
       messages = [messages];
     }
-    _.each(messages, function(message) {
+    var newMessages = _.map(messages, messageToObject);
+    _.each(newMessages, function(message) {
       var data = {
         apiKey: that.kikApiKey,
         username: that.kikUsername,
@@ -272,20 +273,27 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       internalLogOutgoing(data, 'kiknpm');
     });
 
-    that.botHandle.originalSend(messages, recipient, chatId);
+    that.botHandle.originalSend(newMessages, recipient, chatId);
+  }
+
+  function messageToObject(message) {
+    var messageObj = {};
+    if (util.isFunction(message.toJSON)) {
+      Object.assign(messageObj, message.toJSON());
+    }
+    else if (util.isString(message)) {
+      Object.assign(messageObj, {'type': 'text', 'body': message});
+    }
+    else {
+      Object.assign(messageObj, message);
+    }
+    messageObj.id = uuid.v4();
+    return messageObj;
   }
 
   function kikPrepareMessage(message, recipient, chatId) {
-    var kikMessage = {};
-    if (util.isFunction(message.toJSON)) {
-      Object.assign(kikMessage, message.toJSON(), {'to': recipient});
-    }
-    else if (util.isString(message)) {
-      Object.assign(kikMessage, {'type': 'text', 'body': message, 'to': recipient});
-    }
-    else {
-      Object.assign(kikMessage, message, {'to': recipient});
-    }
+    var kikMessage = _.cloneDeep(message);
+    kikMessage.to = recipient;
     if (chatId) {
       kikMessage.chatId = chatId
     }
@@ -297,19 +305,20 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       messages = [messages];
     }
 
+    var newMessages = _.map(messages, messageToObject);
     if (recipients) {
       if (!!recipients && !util.isArray(recipients)) {
         recipients = [recipients];
       }
 
       recipients.forEach(function (recipient) {
-        messages.forEach(function (message) {
+        newMessages.forEach(function (message) {
           that.logOutgoing(that.kikApiKey, that.kikUsername, kikPrepareMessage(message, recipient));
         });
       });
     }
 
-    return that.botHandle.originalBroadcast(messages, recipients);
+    return that.botHandle.originalBroadcast(newMessages, recipients);
 
   }
 
