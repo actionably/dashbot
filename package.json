@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -25,7 +25,7 @@
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
     "body-parser": "1.15.0",
-		"botkit": "0.2.2",
+    "botkit": "0.2.2",
     "circular-json": "0.3.0",
     "express": "4.13.4",
     "websocket": "1.0.23"

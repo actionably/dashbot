@@ -3,9 +3,10 @@
 var rp = require('request-promise');
 var uuid = require('node-uuid');
 var _ = require('lodash');
-const util = require('util');
+var util = require('util');
+var fs = require('fs');
 
-var VERSION = '0.7.3';
+var VERSION = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version;
 
 function makeRequest(data, printErrors) {
   if (printErrors) {
@@ -168,6 +169,11 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
     delete id.prefs;
     var teamInfo = _.cloneDeep(bot.team_info);
     delete teamInfo.prefs;
+    if (!id.id && _.get(teamInfo, 'bot.user_id')) {
+      id = {
+        id: _.get(teamInfo, 'bot.user_id')
+      }
+    }
     teamInfo.bot = id;
     return {
       team: teamInfo,
@@ -184,7 +190,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
         name: team.name
       },
       bot: {
-        id: bot.id
+        id: (bot.id?bot.id:_.get(team, 'bot.user_id'))
       },
       message: message
     };

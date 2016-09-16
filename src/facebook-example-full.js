@@ -55,6 +55,18 @@ function getMessage(text, payload) {
         }
       }
     }
+  } else if (text === 'typing_on') {
+    return {
+      sender_action: 'typing_on'
+    };
+  } else if (text === 'typing_off') {
+    return {
+      sender_action: 'typing_off'
+    };
+  } else if (text === 'mark_seen') {
+    return {
+      sender_action: 'mark_seen'
+    };
   } else if (text === 'buttons') {
     return {
       attachment: {
@@ -154,14 +166,20 @@ app.post(webHookPath, function(req, res) {
     if (!pausedUsers[sender]) {
       const text = event.message?event.message.text:null;
       const payload = event.postback?event.postback.payload:null;
+      const message = getMessage(text, payload);
+      const json = {
+        recipient: {id: sender}
+      };
+      if (message.sender_action) {
+        json.sender_action = message.sender_action;
+      } else {
+        json.message = message;
+      }
       const requestData = {
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
         method: 'POST',
-        json: {
-          recipient: {id: sender},
-          message: getMessage(text, payload)
-        }
+        json: json
       };
       request(requestData, function(error, response, body) {
         dashbot.logOutgoing(requestData, response.body);

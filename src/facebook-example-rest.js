@@ -13,10 +13,11 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
+const fs = require('fs');
 
 var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
 var apiKey = process.env.DASHBOT_API_KEY;
-var version = '0.7.3-rest';
+var version = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version+'-rest';
 var debug = true;
 
 var app = express();
