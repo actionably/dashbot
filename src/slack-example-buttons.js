@@ -40,9 +40,9 @@ const controller = botkit.slackbot({
           "bot": {
             "createdBy": "U0RKX8RDM",
             "user_id": "U0S1R3AS0",
-            "token": "xoxb-26059112884-KhPX2eVgyJGjBgsmlQ1O6Icr"
+            "token": "..."
           },
-          "token": "xoxb-26059112884-KhPX2eVgyJGjBgsmlQ1O6Icr"
+          "token": "..."
         });
       },
       save : function(data, cb) {
