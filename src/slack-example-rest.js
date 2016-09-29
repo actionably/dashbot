@@ -39,6 +39,7 @@ rp('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, functio
   const bot = parsedData.self;
   const team = parsedData.team;
   const baseMessage = {
+    token: process.env.SLACK_BOT_TOKEN,
     team: {
       id: team.id,
       name: team.name
