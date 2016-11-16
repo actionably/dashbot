@@ -375,6 +375,56 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
+function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
+  var that = this;
+  that.apiKey = apiKey;
+  that.platform = 'microsoft';
+  that.urlRoot = urlRoot;
+  that.debug = debug;
+  that.printErrors = printErrors;
+
+  // middleware endpoints
+  that.receive = function(session, next) {
+    internalLogIncoming(session, 'npm');
+    next();
+  };
+
+  // middleware endpoints
+  that.send = function(session, next) {
+    internalLogOutgoing(session, 'npm');
+    next();
+  };
+
+  function internalLogIncoming(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Incoming: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  function internalLogOutgoing(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Outgoing: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+}
+
 module.exports = function(apiKey, config) {
   if (!apiKey) {
     throw new Error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
@@ -394,6 +444,7 @@ module.exports = function(apiKey, config) {
   return {
     facebook: new DashBotFacebook(apiKey, urlRoot, debug, printErrors),
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
-    kik: new DashBotKik(apiKey, urlRoot, debug, printErrors)
+    kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
+    microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors)
   };
 };
