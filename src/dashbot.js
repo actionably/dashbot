@@ -382,16 +382,33 @@ function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
+  that.token = null;
+
+  that.setFacebookToken = function(token){
+    that.token = token;
+  }
 
   // middleware endpoints
   that.receive = function(session, next) {
-    internalLogIncoming(session, 'npm');
+    var data = {
+      json: session
+    };
+    if(that.token != null){
+      data.token = that.token;
+    }
+    internalLogIncoming(data, 'npm');
     next();
   };
 
   // middleware endpoints
   that.send = function(session, next) {
-    internalLogOutgoing(session, 'npm');
+    var data = {
+      json: session
+    };
+    if(that.token != null){
+      data.token = that.token;
+    }
+    internalLogOutgoing(data, 'npm');
     next();
   };
 

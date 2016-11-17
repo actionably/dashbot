@@ -70,7 +70,9 @@ bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i
 
 const dashbot = require('dashbot')(process.env.DASHBOT_API_KEY,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).microsoft;
-  
+
+dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN);
+
 bot.use(dashbot);
 
 //=========================================================
