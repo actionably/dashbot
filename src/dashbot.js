@@ -26,9 +26,10 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   that.debug = debug;
   that.printErrors = printErrors;
 
-  function logIncomingInternal(data, source) {
+  function logIncomingInternal(data, source, type) {
+    type = type || 'incoming'
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+      that.apiKey + '&type=' + type + '&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
@@ -54,6 +55,13 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
       method: 'POST',
       json: data
     }, that.printErrors);
+  };
+
+  /*
+   * For use with is_echo=true just log all incoming you don't have to log outgoing.
+   */
+  that.log = function(data) {
+    return logIncomingInternal(data, 'npm', 'all');
   };
 
   that.logIncoming = function(data) {
