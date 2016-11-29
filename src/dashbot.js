@@ -391,6 +391,7 @@ function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
   // middleware endpoints
   that.receive = function(session, next) {
     var data = {
+      is_microsoft:true,
       json: session
     };
     if(that.token != null){
@@ -403,6 +404,7 @@ function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
   // middleware endpoints
   that.send = function(session, next) {
     var data = {
+      is_microsoft:true,
       json: session
     };
     if(that.token != null){
