@@ -375,10 +375,12 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
-function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
+function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
   var that = this;
-  that.apiKey = apiKey;
-  that.platform = 'microsoft';
+  that.apiKeys = apiKeys;
+  console.log('apiKeys', apiKeys);
+  that.apiKey = apiKeys[0].apiKey; // init to the first one passed
+  that.platform = 'generic';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
@@ -394,6 +396,17 @@ function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
       is_microsoft:true,
       json: session
     };
+    switch (session.source) {
+      case 'facebook':
+      case 'slack':
+      case 'kik':
+        that.platform = session.source;
+        that.apiKey = _.find(that.apiKeys, { 'platform': session.source }).apiKey;
+        break;
+      default:
+        that.platform = 'generic';
+        that.apiKey = _.find(that.apiKeys, { 'platform': 'generic' }).apiKey;
+    }
     if(that.token != null){
       data.token = that.token;
     }
@@ -407,6 +420,17 @@ function DashBotMicrosoft(apiKey, urlRoot, debug, printErrors) {
       is_microsoft:true,
       json: session
     };
+    switch (session.source) {
+      case 'facebook':
+      case 'slack':
+      case 'kik':
+        that.platform = session.source;
+        that.apiKey = _.find(that.apiKeys, { 'platform': session.source }).apiKey;
+        break;
+      default:
+        that.platform = 'generic';
+        that.apiKey = _.find(that.apiKeys, { 'platform': 'generic' }).apiKey;
+    } 
     if(that.token != null){
       data.token = that.token;
     }
