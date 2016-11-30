@@ -378,7 +378,6 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
 function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKeys = apiKeys;
-  console.log('apiKeys', apiKeys);
   that.apiKey = apiKeys[0].apiKey; // init to the first one passed
   that.platform = 'generic';
   that.urlRoot = urlRoot;
