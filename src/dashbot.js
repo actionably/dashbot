@@ -285,7 +285,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       internalLogOutgoing(data, 'kiknpm');
     });
 
-    that.botHandle.originalSend(newMessages, recipient, chatId);
+    return that.botHandle.originalSend(newMessages, recipient, chatId);
   }
 
   function messageToObject(message) {
