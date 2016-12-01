@@ -378,6 +378,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
 function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKeys = apiKeys;
+  //console.log('apiKeys', apiKeys);
   that.apiKey = apiKeys[0].apiKey; // init to the first one passed
   that.platform = 'generic';
   that.urlRoot = urlRoot;
@@ -419,7 +420,10 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
       is_microsoft:true,
       json: session
     };
-    switch (session.source) {
+    //console.log('msftbf session:', session);
+    var platform = session.source ? session.source : _.get(session, 'address.channelId');
+    //console.log('msftbf platform is ', platform)
+    switch (platform) {
       case 'facebook':
       case 'slack':
       case 'kik':
@@ -441,8 +445,8 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
     var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
-      console.log('Dashbot Incoming: ' + url);
-      console.log(JSON.stringify(data, null, 2));
+      //console.log('\nDashbot Incoming: ' + url);
+      //console.log(JSON.stringify(data, null, 2));
     }
     makeRequest({
       uri: url,
@@ -455,8 +459,8 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
     var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
-      console.log('Dashbot Outgoing: ' + url);
-      console.log(JSON.stringify(data, null, 2));
+      //console.log('\nDashbot Outgoing: ' + url);
+      //console.log(JSON.stringify(data, null, 2));
     }
     makeRequest({
       uri: url,
