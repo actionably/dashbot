@@ -375,76 +375,57 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
-function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
+function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
   var that = this;
-  that.apiKeys = apiKeys;
-  //console.log('apiKeys', apiKeys);
-  that.apiKey = apiKeys[0].apiKey; // init to the first one passed
-  that.platform = 'generic';
+  that.apiKeyMap = apiKeyMap;
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
-  that.token = null;
-
+  that.facebookToken = null;
+  
+  // facebook token hack
   that.setFacebookToken = function(token){
-    that.token = token;
+    that.facebookToken = token;
   }
 
   // middleware endpoints
   that.receive = function(session, next) {
-    var data = {
-      is_microsoft:true,
-      json: session
-    };
-    var platform = session.source ? session.source : _.get(session, 'address.channelId');
-    switch (platform) {
-      case 'facebook':
-      case 'slack':
-      case 'kik':
-        that.platform = session.source;
-        that.apiKey = _.find(that.apiKeys, { 'platform': session.source }).apiKey;
-        break;
-      default:
-        that.platform = 'generic';
-        that.apiKey = _.find(that.apiKeys, { 'platform': 'generic' }).apiKey;
-    }
-    if(that.token != null){
-      data.token = that.token;
-    }
-    internalLogIncoming(data, 'npm');
-    next();
+    logDashbot(session, true, next);
   };
-
-  // middleware endpoints
   that.send = function(session, next) {
+    logDashbot(session, false, next);
+  };
+
+  function logDashbot (session, isIncoming, next) {
+    if (that.debug) {
+      console.log('\n*** MSFTBK Debug: ', (isIncoming ? 'incoming' : 'outgoing'), JSON.stringify(session, null, 2))
+    }
+
     var data = {
       is_microsoft:true,
       json: session
     };
+    // hack for facebook token
+    if(platform === 'facebook' && that.facebookToken != null){
+      data.token = that.facebookToken;
+    }
+
     var platform = session.source ? session.source : _.get(session, 'address.channelId');
-    switch (platform) {
-      case 'facebook':
-      case 'slack':
-      case 'kik':
-        that.platform = session.source;
-        that.apiKey = _.find(that.apiKeys, { 'platform': session.source }).apiKey;
-        break;
-      default:
-        that.platform = 'generic';
-        that.apiKey = _.find(that.apiKeys, { 'platform': 'generic' }).apiKey;
-    } 
-    if(that.token != null){
-      data.token = that.token;
-    }
-    internalLogOutgoing(data, 'npm');
-    next();
-  };
 
-  function internalLogIncoming(data, source) {
+    var apiKey = apiKeyMap[platform]
+    if (!apiKey) {
+      console.warn('**** Warning: No Dashbot apiKey for ' + platform + ' Data not saved. ')
+      next();
+      return;
+    }
+
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+      apiKey + '&type=' + (isIncoming ? 'incoming' : 'outgoing') +
+      '&platform=' + platform + '&v=' + VERSION + '-npm';
     if (that.debug) {
-      //console.log('\nDashbot Incoming: ' + url);
+      console.log(' *** platform is ' + platform);
+      console.log(' *** apiKey is ' + apiKey);
+      console.log('\nDashbot Outgoing: ' + url);
       //console.log(JSON.stringify(data, null, 2));
     }
     makeRequest({
@@ -452,20 +433,8 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
       method: 'POST',
       json: data
     }, that.printErrors);
-  }
 
-  function internalLogOutgoing(data, source) {
-    var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
-    if (that.debug) {
-      //console.log('\nDashbot Outgoing: ' + url);
-      //console.log(JSON.stringify(data, null, 2));
-    }
-    makeRequest({
-      uri: url,
-      method: 'POST',
-      json: data
-    }, that.printErrors);
+    next();  
   }
 
 }
