@@ -396,7 +396,8 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
       is_microsoft:true,
       json: session
     };
-    switch (session.source) {
+    var platform = session.source ? session.source : _.get(session, 'address.channelId');
+    switch (platform) {
       case 'facebook':
       case 'slack':
       case 'kik':
@@ -420,9 +421,7 @@ function DashBotMicrosoft(apiKeys, urlRoot, debug, printErrors) {
       is_microsoft:true,
       json: session
     };
-    //console.log('msftbf session:', session);
     var platform = session.source ? session.source : _.get(session, 'address.channelId');
-    //console.log('msftbf platform is ', platform)
     switch (platform) {
       case 'facebook':
       case 'slack':
