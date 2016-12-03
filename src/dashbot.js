@@ -398,7 +398,7 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
 
   function logDashbot (session, isIncoming, next) {
     if (that.debug) {
-      console.log('\n*** MSFTBK Debug: ', (isIncoming ? 'incoming' : 'outgoing'), JSON.stringify(session, null, 2))
+      //console.log('\n*** MSFTBK Debug: ', (isIncoming ? 'incoming' : 'outgoing'), JSON.stringify(session, null, 2))
     }
 
     var data = {
@@ -414,19 +414,24 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
 
     var apiKey = apiKeyMap[platform]
     if (!apiKey) {
-      console.warn('**** Warning: No Dashbot apiKey for ' + platform + ' Data not saved. ')
+      console.warn('**** Warning: No Dashbot apiKey for platform:(' + platform + ') Data not saved. ')
       next();
       return;
+    }
+
+    // if the platform is not supported by us, use generic
+    if (_.indexOf(['facebook', 'kik', 'slack'], platform) === -1) {
+      platform = 'generic';
     }
 
     var url = that.urlRoot + '?apiKey=' +
       apiKey + '&type=' + (isIncoming ? 'incoming' : 'outgoing') +
       '&platform=' + platform + '&v=' + VERSION + '-npm';
     if (that.debug) {
+      console.log('\n*** Dashbot MSFT Bot Framework Debug **');
       console.log(' *** platform is ' + platform);
-      console.log(' *** apiKey is ' + apiKey);
-      console.log('\nDashbot Outgoing: ' + url);
-      //console.log(JSON.stringify(data, null, 2));
+      console.log(' *** Dashbot Url: ' + url);
+      console.log(JSON.stringify(data, null, 2));
     }
     makeRequest({
       uri: url,
