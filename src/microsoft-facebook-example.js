@@ -32,7 +32,8 @@ var dashbotApiMap = {
     'facebook': process.env.DASHBOT_API_KEY_FACEBOOK,
     'slack':  process.env.DASHBOT_API_KEY_SLACK,
     'kik': process.env.DASHBOT_API_KEY_KIK,
-    'webchat': process.env.DASHBOT_API_KEY_GENERIC
+    'webchat': process.env.DASHBOT_API_KEY_GENERIC,
+    'skype': process.env.DASHBOT_API_KEY_GENERIC
 };
 
 const dashbot = require('dashbot')(dashbotApiMap,{debug:false}).microsoft;
