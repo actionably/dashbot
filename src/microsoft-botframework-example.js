@@ -28,20 +28,19 @@ server.post('/api/messages', connector.listen());
 // Anytime the major version is incremented any existing conversations will be restarted.
 bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i }));
 
-var dashbotApiMap = {
-    'facebook': process.env.DASHBOT_API_KEY_FACEBOOK,
-    'slack':  process.env.DASHBOT_API_KEY_SLACK,
-    'kik': process.env.DASHBOT_API_KEY_KIK,
-    'webchat': process.env.DASHBOT_API_KEY_GENERIC,
-    'skype': process.env.DASHBOT_API_KEY_GENERIC
+// only include tokens for the platforms that you support
+const dashbotApiMap = {
+    facebook: process.env.DASHBOT_API_KEY_FACEBOOK,
+    slack:  process.env.DASHBOT_API_KEY_SLACK,
+    kik: process.env.DASHBOT_API_KEY_KIK,
+    webchat: process.env.DASHBOT_API_KEY_GENERIC,
+    skype: process.env.DASHBOT_API_KEY_GENERIC
 };
 
 const dashbot = require('dashbot')(dashbotApiMap,{debug:false}).microsoft;
-
-dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN);
+dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN); // only needed for Facebook Bots
 
 bot.use(dashbot);
-
 
 //=========================================================
 // Bots Global Actions
