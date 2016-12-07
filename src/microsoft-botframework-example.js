@@ -1,17 +1,19 @@
 'use strict';
 
-var restify = require('restify');
 var builder = require('botbuilder');
 
 //=========================================================
 // Bot Setup
 //=========================================================
 
-// Setup Restify Server
-var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url); 
-});
+// Set up Express Server
+const express = require('express');
+const bodyParser = require('body-parser');
+var port = process.env.PORT || 3978;
+const app = express();
+
+app.listen(port);
+console.log('Bot listening on port:' + port);
   
 // Create chat bot
 var connector = new builder.ChatConnector({
@@ -19,28 +21,29 @@ var connector = new builder.ChatConnector({
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var bot = new builder.UniversalBot(connector);
-server.post('/api/messages', connector.listen());
+app.post('/api/messages', connector.listen());
 
 //=========================================================
 // Bots Middleware
 //=========================================================
 
 // Anytime the major version is incremented any existing conversations will be restarted.
-bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i }));
+//bot.use(builder.Middleware.dialogVersion({ version: 1.0, resetCommand: /^reset/i }));
 
 // only include tokens for the platforms that you support
-const dashbotApiMap = {
-    facebook: process.env.DASHBOT_API_KEY_FACEBOOK,
-    slack:  process.env.DASHBOT_API_KEY_SLACK,
-    kik: process.env.DASHBOT_API_KEY_KIK,
-    webchat: process.env.DASHBOT_API_KEY_GENERIC,
-    skype: process.env.DASHBOT_API_KEY_GENERIC
+var dashbotApiMap = {
+    'facebook': process.env.DASHBOT_API_KEY_FACEBOOK,
+    'slack':  process.env.DASHBOT_API_KEY_SLACK,
+    'kik': process.env.DASHBOT_API_KEY_KIK,
+    'webchat': process.env.DASHBOT_API_KEY_GENERIC,
+    'skype': process.env.DASHBOT_API_KEY_GENERIC
 };
 
-const dashbot = require('dashbot')(dashbotApiMap,{debug:false}).microsoft;
-dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN); // only needed for Facebook Bots
 
+const dashbot = require('./dashbot')(dashbotApiMap,{debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).microsoft;
+dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN); // only needed for Facebook Bots
 bot.use(dashbot);
+
 
 //=========================================================
 // Bots Global Actions
