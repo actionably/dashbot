@@ -157,7 +157,11 @@ function getMessage(text, payload) {
 }
 
 app.post(webHookPath, function(req, res) {
-  dashbot.logIncoming(req.body);
+  if (process.env.FACEBOOK_IS_ECHO) {
+    dashbot.log(req.body);
+  } else {
+    dashbot.logIncoming(req.body);
+  }
   const messagingEvents = req.body.entry[0].messaging;
   if (messagingEvents.length && (messagingEvents[0].message && messagingEvents[0].message.text ||
                                 messagingEvents[0].postback && messagingEvents[0].postback.payload)) {
@@ -182,7 +186,9 @@ app.post(webHookPath, function(req, res) {
         json: json
       };
       request(requestData, function(error, response, body) {
-        dashbot.logOutgoing(requestData, response.body);
+        if (!process.env.FACEBOOK_IS_ECHO) {
+          dashbot.logOutgoing(requestData, response.body);
+        }
       });
     }
   }

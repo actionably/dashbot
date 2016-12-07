@@ -10,7 +10,7 @@ var VERSION = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version;
 
 function makeRequest(data, printErrors) {
   if (printErrors) {
-    rp(data);
+    return rp(data);
   } else {
     rp(data).catch(function(err) {
       // ignore
@@ -26,14 +26,15 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   that.debug = debug;
   that.printErrors = printErrors;
 
-  function logIncomingInternal(data, source) {
+  function logIncomingInternal(data, source, type) {
+    type = type || 'incoming'
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+      that.apiKey + '&type=' + type + '&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -49,19 +50,26 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
     }, that.printErrors);
   };
 
+  /*
+   * For use with is_echo=true just log all incoming you don't have to log outgoing.
+   */
+  that.log = function(data) {
+    return logIncomingInternal(data, 'npm', 'all');
+  };
+
   that.logIncoming = function(data) {
-    logIncomingInternal(data, 'npm');
+    return logIncomingInternal(data, 'npm');
   };
 
   that.logOutgoing = function(data, responseBody) {
-    logOutgoingInternal(data, responseBody, 'npm');
+    return logOutgoingInternal(data, responseBody, 'npm');
   };
 
   function getAndRemove(obj, prop) {
@@ -140,7 +148,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -155,13 +163,11 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       console.log(JSON.stringify(data, null, 2));
     }
     data = _.clone(data);
-    data.requestId = uuid.v4();
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
     }, that.printErrors);
-    return data.requestId;
   }
 
   function addTeamInfo(bot, message) {
@@ -204,7 +210,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Connect: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -279,7 +285,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       internalLogOutgoing(data, 'kiknpm');
     });
 
-    that.botHandle.originalSend(newMessages, recipient, chatId);
+    return that.botHandle.originalSend(newMessages, recipient, chatId);
   }
 
   function messageToObject(message) {
@@ -335,7 +341,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -349,7 +355,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -362,7 +368,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       username: botUsername,
       message: message
     };
-    internalLogIncoming(data, 'npm');
+    return internalLogIncoming(data, 'npm');
   };
 
   that.logOutgoing = function(kikApiKey, botUsername, message) {
@@ -371,7 +377,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       username: botUsername,
       message: message
     };
-    internalLogOutgoing(data, 'npm');
+    return internalLogOutgoing(data, 'npm');
   };
 }
 
