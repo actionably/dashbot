@@ -3,7 +3,7 @@ node_modules
 
 #webstorm config
 .idea
-
+.env
 
 npm-debug.log
 

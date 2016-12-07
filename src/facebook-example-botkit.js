@@ -1,7 +1,7 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY) {
-  throw new Error('"DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.FACEBOOK_DASHBOT_API_KEY) {
+  throw new Error('"FACEBOOK_DASHBOT_API_KEY" environment variable must be defined');
 }
 if (!process.env.FACEBOOK_VERIFY_TOKEN) {
   throw new Error('"FACEBOOK_VERIFY_TOKEN" environment variable must be defined');
@@ -10,7 +10,7 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
   throw new Error('"FACEBOOK_PAGE_TOKEN" environment variable must be defined');
 }
 
-var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
+var dashbot = require('./dashbot')(process.env.FACEBOOK_DASHBOT_API_KEY,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).facebook;
 
 
@@ -47,4 +47,3 @@ controller.on('facebook_optin', function(bot, message) {
 controller.on('message_received', function(bot, message) {
   bot.reply(message,  'You are right when you say '+message.text);
 });
-
