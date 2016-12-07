@@ -1,14 +1,14 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY) {
-  throw new Error('"DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_SLACK) {
+  throw new Error('"DASHBOT_API_KEY_SLACK" environment variable must be defined');
 }
 if (!process.env.SLACK_BOT_TOKEN) {
   throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
 }
 
 const botkit = require('botkit');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_SLACK,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).slack;
 
 const controller = botkit.slackbot();

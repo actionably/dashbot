@@ -8,13 +8,19 @@
     "url": "git+https://github.com/actionably/dashbot.git"
   },
   "scripts": {
-    "facebook": "node -r dotenv/config src/facebook-example.js"
+    "facebook": "nodemon -r dotenv/config src/facebook-example-full.js",
+    "generic": "nodemon -r dotenv/config src/generic-example.js",
+    "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
+    "slack": "nodemon -r dotenv/config src/slack-example.js",
+    "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js"
   },
   "keywords": [
     "bot",
     "bots",
     "chatbot",
     "facebook messenger",
+    "microsoft bot framework",
+    "kik",
     "slack",
     "analytics",
     "data",
@@ -33,7 +39,7 @@
     "circular-json": "0.3.0",
     "dotenv": "2.0.0",
     "express": "4.13.4",
-    "require-environment-variables": "1.1.2",
+    "nodemon": "1.11.0",
     "websocket": "1.0.23"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 'use strict';
 
-if (!process.env.FACEBOOK_DASHBOT_API_KEY) {
-  throw new Error('"FACEBOOK_DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_FACEBOOK) {
+  throw new Error('"DASHBOT_API_KEY_FACEBOOK" environment variable must be defined');
 }
 if (!process.env.FACEBOOK_VERIFY_TOKEN) {
   throw new Error('"FACEBOOK_VERIFY_TOKEN" environment variable must be defined');
@@ -16,7 +16,7 @@ var request = require('request');
 const fs = require('fs');
 
 var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
-var apiKey = process.env.FACEBOOK_DASHBOT_API_KEY;
+var apiKey = process.env.DASHBOT_API_KEY_FACEBOOK;
 var version = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version+'-rest';
 var debug = true;
 

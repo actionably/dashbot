@@ -1,5 +1,19 @@
 'use strict';
 
+if (!process.env.MICROSOFT_APP_ID) {
+  throw new Error('"DASHBOT_API_KEY_SLACK" environment variable must be defined');
+}
+if (!process.env.MICROSOFT_APP_PASSWORD) {
+  throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
+}
+
+if (!process.env.DASHBOT_API_KEY_FACEBOOK &&
+  !process.env.DASHBOT_API_KEY_SLACK &&
+  !process.env.DASHBOT_API_KEY_KIK &&
+  !process.env.DASHBOT_API_KEY_GENERIC) {
+    throw new Error('must supply at least one DASHBOT_API_KEY_ environment variable must be defined');
+}
+
 var builder = require('botbuilder');
 
 //=========================================================
@@ -14,7 +28,7 @@ const app = express();
 
 app.listen(port);
 console.log('Bot listening on port:' + port);
-  
+
 // Create chat bot
 var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,

@@ -1,7 +1,7 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY) {
-  throw new Error('"DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_SLACK) {
+  throw new Error('"DASHBOT_API_KEY_SLACK" environment variable must be defined');
 }
 if (!process.env.SLACK_BOT_TOKEN) {
   throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
@@ -14,7 +14,7 @@ const _ = require('lodash');
 
 
 var urlRoot = process.env.DASHBOT_URL_ROOT || 'https://tracker.dashbot.io/track';
-var apiKey = process.env.DASHBOT_API_KEY;
+var apiKey = process.env.DASHBOT_API_KEY_SLACK;
 var version = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version+'-rest';
 var debug = true;
 
@@ -97,4 +97,3 @@ rp('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, functio
   });
   client.connect(parsedData.url);
 });
-

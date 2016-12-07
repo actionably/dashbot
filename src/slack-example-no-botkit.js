@@ -1,13 +1,13 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY) {
-  throw new Error('"DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_SLACK) {
+  throw new Error('"DASHBOT_API_KEY_SLACK" environment variable must be defined');
 }
 if (!process.env.SLACK_BOT_TOKEN) {
   throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
 }
 
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY,
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_SLACK,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).slack;
 const request = require('request');
 var WebSocketClient = require('websocket').client;
@@ -64,4 +64,3 @@ request('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, fu
   });
   client.connect(parsedData.url);
 });
-

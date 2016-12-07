@@ -1,7 +1,7 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY) {
-  throw new Error('"DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_GENERIC) {
+  throw new Error('"DASHBOT_API_KEY_GENERIC" environment variable must be defined');
 }
 
 var request = require('request');
@@ -19,7 +19,7 @@ function ask(question) {
     qs : {
       type: 'outgoing',
       platform: 'generic',
-      apiKey: process.env.DASHBOT_API_KEY,
+      apiKey: process.env.DASHBOT_API_KEY_GENERIC,
       v: version
     },
     method: 'POST',
@@ -34,7 +34,7 @@ function ask(question) {
       qs : {
         type: 'incoming',
         platform: 'generic',
-        apiKey: process.env.DASHBOT_API_KEY,
+        apiKey: process.env.DASHBOT_API_KEY_GENERIC,
         v: version
       },
       method: 'POST',
@@ -52,4 +52,3 @@ function ask(question) {
 }
 
 ask('Tell me your thoughts: ');
-

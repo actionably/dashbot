@@ -1,7 +1,7 @@
 'use strict';
 
-if (!process.env.FACEBOOK_DASHBOT_API_KEY) {
-  throw new Error('"FACEBOOK_DASHBOT_API_KEY" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_FACEBOOK) {
+  throw new Error('"DASHBOT_API_KEY_FACEBOOK" environment variable must be defined');
 }
 if (!process.env.FACEBOOK_VERIFY_TOKEN) {
   throw new Error('"FACEBOOK_VERIFY_TOKEN" environment variable must be defined');
@@ -13,7 +13,7 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const dashbot = require('./dashbot')(process.env.FACEBOOK_DASHBOT_API_KEY,
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
 
 const app = express();
