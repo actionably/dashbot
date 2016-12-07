@@ -403,6 +403,7 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
 
     var data = {
       is_microsoft:true,
+      dashbot_timestamp: new Date().getTime(),
       json: session
     };
     // hack for facebook token
