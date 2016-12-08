@@ -7,6 +7,7 @@ Currently we support
 * [Facebook Messenger](http://www.dashbot.io/sdk/facebook)
 * [Slack](http://www.dashbot.io/sdk/slack)
 * [Kik](http://www.dashbot.io/sdk/kik)
+* [Google](http://www.dashbot.io/sdk/google)
 * [Generic](http://www.dashbot.io/sdk/generic)
 
 ## Setup
