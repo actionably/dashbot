@@ -388,7 +388,7 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
   that.debug = debug;
   that.printErrors = printErrors;
   that.facebookToken = null;
-  
+
   // facebook token hack
   that.setFacebookToken = function(token){
     that.facebookToken = token;
@@ -446,9 +446,128 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
       json: data
     }, that.printErrors);
 
-    next();  
+    next();
   }
 
+}
+
+function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
+  var that = this;
+  that.apiKey = apiKey;
+  that.platform = 'google';
+  that.urlRoot = urlRoot;
+  that.debug = debug;
+  that.printErrors = printErrors;
+
+  that.assistantHandle = null;
+  that.requestBody = null;
+
+  that.configHandler = function(assistant){
+    if (assistant == null) {
+      throw new Error('YOU MUST SUPPLY THE ASSISTANT OBJECT TO DASHBOT!');
+    }
+    that.assistantHandle = assistant;
+    that.assistantHandle.originalTell = assistant.tell;
+    that.assistantHandle.tell = dashbotTell;
+
+    that.assistantHandle.originalAskForInput = assistant.askForInput;
+    that.assistantHandle.askForInput = dashbotAskForInput;
+
+    that.requestBody = assistant.req_.body;
+    that.logIncoming(assistant.req_.body);
+  };
+
+  function dashbotAskForInput(input_prompt, possible_intents, speech_biasing_hints, conversation_token){
+
+    let input = {
+      input_prompt: input_prompt,
+      possible_intents: possible_intents,
+      speech_biasing_hints: speech_biasing_hints
+    };
+    let data = googleBuildResponseHelper(conversation_token, true, input, null);
+    //internalLogOutgoing(data, "google-assistant");
+    that.logOutgoing(that.requestBody, data);
+    that.assistantHandle.originalAskForInput(input_prompt, possible_intents, speech_biasing_hints, conversation_token);
+  }
+
+  function dashbotTell(speech_response, is_ssml){
+    let data = googleBuildResponseHelper(null, false, null, {
+      speech_response: speech_response
+    });
+    //internalLogOutgoing(data, "google-assistant");
+    that.logOutgoing(that.requestBody, data);
+    that.assistantHandle.originalTell(speech_response, is_ssml);
+  }
+
+  function googleBuildResponseHelper(conversation_token, expect_user_response, expected_input, final_response){
+    var response = {};
+    if (conversation_token) {
+      response.conversation_token = conversation_token;
+    }
+    response.expect_user_response = expect_user_response;
+    if (expected_input) {
+      response.expected_inputs = [expected_input];
+    }
+    if (!expect_user_response && final_response) {
+      response.final_response = final_response;
+    }
+    return response;
+  }
+
+  function internalLogIncoming(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Incoming: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  function internalLogOutgoing(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Outgoing: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  that.logIncoming = function(requestBody) {
+    let timestamp = new Date().getTime();
+    var data = {
+      dashbot_timestamp: timestamp,
+      message: requestBody
+    };
+    internalLogIncoming(data, 'npm');
+  };
+
+  that.logOutgoing = function(requestBody, message) {
+    let userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
+    let conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
+
+    let timestamp = new Date().getTime();
+    var data = {
+      dashbot_timestamp: timestamp,
+      user: {
+        user_id: userId
+      },
+      conversation: {
+        conversation_id: conversationId
+      },
+      message: message
+    };
+    internalLogOutgoing(data, 'npm');
+  };
 }
 
 module.exports = function(apiKey, config) {
@@ -471,6 +590,7 @@ module.exports = function(apiKey, config) {
     facebook: new DashBotFacebook(apiKey, urlRoot, debug, printErrors),
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
-    microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors)
+    microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
+    google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors)
   };
 };

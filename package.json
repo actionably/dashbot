@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "0.7.8",
+  "version": "0.8.0",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -12,7 +12,8 @@
     "generic": "nodemon -r dotenv/config src/generic-example.js",
     "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
     "slack": "nodemon -r dotenv/config src/slack-example.js",
-    "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js"
+    "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js",
+    "google": "nodemon -r dotenv/config src/google-example-api-ai.js"
   },
   "keywords": [
     "bot",
@@ -33,6 +34,7 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
+    "actions-on-google": "",
     "body-parser": "1.15.0",
     "botbuilder": "3.4.4",
     "botkit": "0.2.2",

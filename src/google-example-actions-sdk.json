@@ -1,0 +1,27 @@
+{
+  "versionLabel": "hello action v0.1",
+  "agentInfo": {
+    "languageCode": "en-US",
+    "projectId": "testing",
+    "invocationNames": [
+      "Hello Action"
+    ],
+    "voiceName": "male_1",
+    "privateKey": "MY_SECRET_KEY"
+  },
+  "actions": [
+		{
+			"initialTrigger": {
+				"intent": "assistant.intent.action.MAIN",
+				"queryPatterns": [
+					{
+						"queryPattern": "talk to Hello Action"
+					}
+				]
+			},
+			"httpExecution": {
+				"url": "https://jhull.localtunnel.me/helloAction"
+			}
+		}
+  ]
+}
