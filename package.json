@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
-    "actions-on-google": "",
+    "actions-on-google": "1.0.1",
     "body-parser": "1.15.0",
     "botbuilder": "3.4.4",
     "botkit": "0.2.2",
