@@ -1,10 +1,10 @@
 'use strict';
 
 if (!process.env.MICROSOFT_APP_ID) {
-  throw new Error('"DASHBOT_API_KEY_SLACK" environment variable must be defined');
+  throw new Error('"MICROSOFT_APP_ID" environment variable must be defined');
 }
 if (!process.env.MICROSOFT_APP_PASSWORD) {
-  throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
+  throw new Error('"MICROSOFT_APP_PASSWORD" environment variable must be defined');
 }
 
 if (!process.env.DASHBOT_API_KEY_FACEBOOK &&
