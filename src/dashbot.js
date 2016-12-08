@@ -412,12 +412,12 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
       dashbot_timestamp: new Date().getTime(),
       json: session
     };
+    var platform = session.source ? session.source : _.get(session, 'address.channelId');
+    
     // hack for facebook token
     if(platform === 'facebook' && that.facebookToken != null){
       data.token = that.facebookToken;
     }
-
-    var platform = session.source ? session.source : _.get(session, 'address.channelId');
 
     var apiKey = apiKeyMap[platform]
     if (!apiKey) {
