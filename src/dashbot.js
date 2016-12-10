@@ -413,7 +413,7 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
       json: session
     };
     var platform = session.source ? session.source : _.get(session, 'address.channelId');
-    
+
     // hack for facebook token
     if(platform === 'facebook' && that.facebookToken != null){
       data.token = that.facebookToken;
@@ -467,51 +467,17 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
       throw new Error('YOU MUST SUPPLY THE ASSISTANT OBJECT TO DASHBOT!');
     }
     that.assistantHandle = assistant;
-    that.assistantHandle.originalTell = assistant.tell;
-    that.assistantHandle.tell = dashbotTell;
 
-    that.assistantHandle.originalAskForInput = assistant.askForInput;
-    that.assistantHandle.askForInput = dashbotAskForInput;
+    that.assistantHandle.originalDoResponse = assistant.doResponse_;
+    that.assistantHandle.doResponse_ = dashbotDoResponse;
 
-    that.requestBody = assistant.req_.body;
-    that.logIncoming(assistant.req_.body);
+    that.requestBody = assistant.body_;
+    that.logIncoming(assistant.body_);
   };
 
-  function dashbotAskForInput(input_prompt, possible_intents, speech_biasing_hints, conversation_token){
-
-    let input = {
-      input_prompt: input_prompt,
-      possible_intents: possible_intents,
-      speech_biasing_hints: speech_biasing_hints
-    };
-    let data = googleBuildResponseHelper(conversation_token, true, input, null);
-    //internalLogOutgoing(data, "google-assistant");
-    that.logOutgoing(that.requestBody, data);
-    that.assistantHandle.originalAskForInput(input_prompt, possible_intents, speech_biasing_hints, conversation_token);
-  }
-
-  function dashbotTell(speech_response, is_ssml){
-    let data = googleBuildResponseHelper(null, false, null, {
-      speech_response: speech_response
-    });
-    //internalLogOutgoing(data, "google-assistant");
-    that.logOutgoing(that.requestBody, data);
-    that.assistantHandle.originalTell(speech_response, is_ssml);
-  }
-
-  function googleBuildResponseHelper(conversation_token, expect_user_response, expected_input, final_response){
-    var response = {};
-    if (conversation_token) {
-      response.conversation_token = conversation_token;
-    }
-    response.expect_user_response = expect_user_response;
-    if (expected_input) {
-      response.expected_inputs = [expected_input];
-    }
-    if (!expect_user_response && final_response) {
-      response.final_response = final_response;
-    }
-    return response;
+  function dashbotDoResponse(response, responseCode){
+    that.logOutgoing(that.requestBody, response)
+    that.assistantHandle.originalDoResponse(response, responseCode);
   }
 
   function internalLogIncoming(data, source) {
