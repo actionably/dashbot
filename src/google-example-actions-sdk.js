@@ -6,7 +6,7 @@ if (!process.env.DASHBOT_API_KEY_GOOGLE) {
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var Assistant = require('actions-on-google').ActionsSdkAssistant;
+var ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
 
 const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).google;
@@ -33,7 +33,7 @@ var server = app.listen(process.env.PORT || '8090', function () {
 });
 
 function helloAction(request, response) {
-  var assistant = new Assistant(request, response);
+  const assistant = new ActionsSdkAssistant({request: request, response: response});
   dashbot.configHandler(assistant);
 
   if (assistant.getRawInput().toLowerCase() == "talk to hello action")
@@ -52,7 +52,7 @@ function randInt(min, max) {
 const gameMap = {}
 
 function guessNumber(request, response) {
-  var assistant = new Assistant(request, response);
+  const assistant = new ActionsSdkAssistant({request: request, response: response});
   dashbot.configHandler(assistant);
 
   const userId = request.body.user.user_id
