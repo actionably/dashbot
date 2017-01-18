@@ -546,11 +546,6 @@ function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
 
   that.requestBody = null;
 
-  function dashbotDoResponse(response, responseCode){
-    that.logOutgoing(that.requestBody, response)
-    that.assistantHandle.originalDoResponse(response, responseCode);
-  }
-
   function internalLogIncoming(data, source) {
     var url = that.urlRoot + '?apiKey=' +
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
@@ -579,18 +574,21 @@ function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
     }, that.printErrors);
   }
 
-  that.logIncoming = function(requestBody) {
+  that.logIncoming = function(intent, session) {
     let timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
-      message: requestBody
+      message: {
+        intent: intent,
+        session: session
+      }
     };
     internalLogIncoming(data, 'npm');
   };
 
-  that.logOutgoing = function(requestBody, message) {
-    let userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
-    let conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
+  that.logOutgoing = function(intent, session, response) {
+    let userId = _.has(session, 'user') ? _.get(session,'user.userId') : 'error getting user';
+    let conversationId = _.has(session, 'sessionId') ? _.get(session,'sessionId') : 'error getting session id from session'
 
     let timestamp = new Date().getTime();
     var data = {
