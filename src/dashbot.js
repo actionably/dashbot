@@ -536,6 +536,71 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
+function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
+  var that = this;
+  that.apiKey = apiKey;
+  that.platform = 'alexa';
+  that.urlRoot = urlRoot;
+  that.debug = debug;
+  that.printErrors = printErrors;
+
+  that.requestBody = null;
+
+  function internalLogIncoming(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Incoming: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+
+    return makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  function internalLogOutgoing(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Outgoing: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    return makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  that.logIncoming = function(event, context) {
+    let timestamp = new Date().getTime();
+    console.log('got here')
+    var data = {
+      dashbot_timestamp: timestamp,
+      event: event,
+      context: context
+    };
+    console.log(data);
+    return internalLogIncoming(data, 'npm');
+  };
+
+  that.logOutgoing = function(event, response, context) {
+    let timestamp = new Date().getTime();
+    var data = {
+      dashbot_timestamp: timestamp,
+      event: event,
+      context: context,
+      response: response
+    };
+    console.log(data);
+    return internalLogOutgoing(data, 'npm');
+  };
+}
+
+
 module.exports = function(apiKey, config) {
   if (!apiKey) {
     throw new Error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
@@ -557,6 +622,7 @@ module.exports = function(apiKey, config) {
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
-    google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors)
+    google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors),
+    alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors)
   };
 };
