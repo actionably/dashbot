@@ -536,6 +536,78 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
+function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
+  var that = this;
+  that.apiKey = apiKey;
+  that.platform = 'amazon';
+  that.urlRoot = urlRoot;
+  that.debug = debug;
+  that.printErrors = printErrors;
+
+  that.requestBody = null;
+
+  function dashbotDoResponse(response, responseCode){
+    that.logOutgoing(that.requestBody, response)
+    that.assistantHandle.originalDoResponse(response, responseCode);
+  }
+
+  function internalLogIncoming(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Incoming: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  function internalLogOutgoing(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Outgoing: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors);
+  }
+
+  that.logIncoming = function(requestBody) {
+    let timestamp = new Date().getTime();
+    var data = {
+      dashbot_timestamp: timestamp,
+      message: requestBody
+    };
+    internalLogIncoming(data, 'npm');
+  };
+
+  that.logOutgoing = function(requestBody, message) {
+    let userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
+    let conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
+
+    let timestamp = new Date().getTime();
+    var data = {
+      dashbot_timestamp: timestamp,
+      user: {
+        user_id: userId
+      },
+      conversation: {
+        conversation_id: conversationId
+      },
+      message: message
+    };
+    internalLogOutgoing(data, 'npm');
+  };
+}
+
+
 module.exports = function(apiKey, config) {
   if (!apiKey) {
     throw new Error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
@@ -557,6 +629,7 @@ module.exports = function(apiKey, config) {
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
-    google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors)
+    google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors),
+    amazon: new DashBotAmazon(apiKey, urlRoot, debug, printErrors)
   };
 };
