@@ -536,7 +536,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   };
 }
 
-function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
+function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'amazon';
@@ -553,7 +553,8 @@ function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -567,41 +568,35 @@ function DashBotAmazon(apiKey, urlRoot, debug, printErrors) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
     }, that.printErrors);
   }
 
-  that.logIncoming = function(intent, session) {
+  that.logIncoming = function(event, context = null) {
     let timestamp = new Date().getTime();
+    console.log('got here')
     var data = {
       dashbot_timestamp: timestamp,
-      message: {
-        intent: intent,
-        session: session
-      }
+      event: event,
+      context: context
     };
-    internalLogIncoming(data, 'npm');
+    console.log(data);
+    return internalLogIncoming(data, 'npm');
   };
 
-  that.logOutgoing = function(intent, session, response) {
-    let userId = _.has(session, 'user') ? _.get(session,'user.userId') : 'error getting user';
-    let conversationId = _.has(session, 'sessionId') ? _.get(session,'sessionId') : 'error getting session id from session'
-
+  that.logOutgoing = function(event, response, context=null) {
     let timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
-      user: {
-        user_id: userId
-      },
-      conversation: {
-        conversation_id: conversationId
-      },
-      message: message
+      event: event,
+      context: context,
+      response: response
     };
-    internalLogOutgoing(data, 'npm');
+    console.log(data);
+    return internalLogOutgoing(data, 'npm');
   };
 }
 
@@ -628,6 +623,6 @@ module.exports = function(apiKey, config) {
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
     google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors),
-    amazon: new DashBotAmazon(apiKey, urlRoot, debug, printErrors)
+    alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors)
   };
 };
