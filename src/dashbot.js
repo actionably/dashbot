@@ -539,7 +539,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
 function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
   var that = this;
   that.apiKey = apiKey;
-  that.platform = 'amazon';
+  that.platform = 'alexa';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
