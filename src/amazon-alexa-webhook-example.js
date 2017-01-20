@@ -18,8 +18,8 @@ app.get(webHookPath, function(req, res) {
   res.send('Hello from the alexa webhook');
 });
 
-app.post(webHookPath, function(request, response) {
-  dashbot.logIncoming(request.body);
+app.post(webHookPath, function(req, res) {
+  dashbot.logIncoming(req.body);
 
   const responseBody = {
     'version': '1.0',
@@ -39,9 +39,9 @@ app.post(webHookPath, function(request, response) {
   };
 
 
-  dashbot.logOutgoing(request.body, responseBody)
+  dashbot.logOutgoing(req.body, responseBody)
 
-  response.send(responseBody);
+  res.send(responseBody);
 
 });
 
