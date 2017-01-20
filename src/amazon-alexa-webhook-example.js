@@ -1,13 +1,13 @@
 'use strict';
 
-if (!process.env.DASHBOT_API_KEY_AMAZON) {
-  throw new Error('"DASHBOT_API_KEY_AMAZON" environment variable must be defined');
+if (!process.env.DASHBOT_API_KEY_ALEXA) {
+  throw new Error('"DASHBOT_API_KEY_ALEXA" environment variable must be defined');
 }
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_AMAZON,
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_ALEXA,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).alexa;
 
 const app = express();
