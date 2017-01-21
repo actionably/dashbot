@@ -575,7 +575,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
     }, that.printErrors);
   }
 
-  that.logIncoming = function(event, context = null) {
+  that.logIncoming = function(event, context) {
     let timestamp = new Date().getTime();
     console.log('got here')
     var data = {
@@ -587,7 +587,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
     return internalLogIncoming(data, 'npm');
   };
 
-  that.logOutgoing = function(event, response, context=null) {
+  that.logOutgoing = function(event, response, context) {
     let timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
