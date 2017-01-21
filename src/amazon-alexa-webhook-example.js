@@ -7,8 +7,10 @@ if (!process.env.DASHBOT_API_KEY_ALEXA) {
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_ALEXA,
-  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).alexa;
+const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_ALEXA, {
+  debug: true,
+  urlRoot: process.env.DASHBOT_URL_ROOT
+}).alexa;
 
 const app = express();
 app.use(bodyParser.json());
