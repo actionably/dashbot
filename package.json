@@ -14,7 +14,8 @@
     "slack": "nodemon -r dotenv/config src/slack-example.js",
     "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js",
     "google": "nodemon -r dotenv/config src/google-example-api-ai.js",
-    "alexa": "nodemon -r dotenv/config src/amazon-alexa-webhook-example.js"
+    "alexa": "nodemon -r dotenv/config src/amazon-alexa-webhook-example.js",
+    "lambda-test": ""
   },
   "keywords": [
     "bot",
@@ -43,7 +44,8 @@
     "dotenv": "2.0.0",
     "express": "4.13.4",
     "nodemon": "1.11.0",
-    "websocket": "1.0.23"
+    "websocket": "1.0.23",
+    "node-lambda": "0.8.5"
   },
   "dependencies": {
     "lodash": "4.12.0",
