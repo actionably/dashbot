@@ -54,17 +54,17 @@ rp('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, functio
       const parsedMessage = JSON.parse(message.utf8Data);
 
       // Tell dashbot when a message arrives
-      var url = urlRoot + '?apiKey=' + apiKey + '&type=incoming&platform=slack&v=' + version;
-      var toSend = _.clone(baseMessage);
-      toSend.message = parsedMessage;
+      var urlIn = urlRoot + '?apiKey=' + apiKey + '&type=incoming&platform=slack&v=' + version;
+      var toSendIn = _.clone(baseMessage);
+      toSendIn.message = parsedMessage;
       if (debug) {
-        console.log('Dashbot incoming: ' + url);
-        console.log(JSON.stringify(toSend, null, 2));
+        console.log('Dashbot incoming: ' + urlIn);
+        console.log(JSON.stringify(toSendIn, null, 2));
       }
       rp({
-        uri: url,
+        uri: urlIn,
         method: 'POST',
-        json: toSend
+        json: toSendIn
       });
 
       if (parsedMessage.type === 'message' && parsedMessage.channel &&
@@ -77,8 +77,8 @@ rp('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, functio
         };
 
         // Tell dashbot about your response
-        var url = urlRoot + '?apiKey=' + apiKey + '&type=outgoing&platform=slack&v=' + version;
-        var toSend = _.clone(baseMessage);
+        const url = urlRoot + '?apiKey=' + apiKey + '&type=outgoing&platform=slack&v=' + version;
+        const toSend = _.clone(baseMessage);
         toSend.message = reply;
         if (debug) {
           console.log('Dashbot outgoing: ' + url);
@@ -89,7 +89,28 @@ rp('https://slack.com/api/rtm.start?token='+process.env.SLACK_BOT_TOKEN, functio
           method: 'POST',
           json: toSend
         });
-
+        if (process.env.REPEAT) {
+          setInterval(() => {
+            if (debug) {
+              console.log('Dashbot incoming: ' + urlIn);
+              console.log(JSON.stringify(toSendIn, null, 2));
+            }
+            rp({
+              uri: urlIn,
+              method: 'POST',
+              json: toSendIn
+            });
+            if (debug) {
+              console.log('Dashbot outgoing: ' + url);
+              console.log(JSON.stringify(toSend, null, 2));
+            }
+            rp({
+              uri: url,
+              method: 'POST',
+              json: toSend
+            });
+          }, 1000)
+        }
         connection.sendUTF(JSON.stringify(reply));
       }
 

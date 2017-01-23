@@ -36,6 +36,7 @@ app.post(webHookPath, function(req, res) {
     const sender = event.sender.id;
     const text = event.message.text;
     if (event.message.is_echo) {
+      res.sendStatus(200);
       return;
     }
     const requestData = {

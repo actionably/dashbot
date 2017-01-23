@@ -4,9 +4,11 @@ if (!process.env.DASHBOT_API_KEY_GENERIC) {
   throw new Error('"DASHBOT_API_KEY_GENERIC" environment variable must be defined');
 }
 
+const fs = require('fs');
+
 var request = require('request');
 var readline = require('readline');
-var version = '0.7.3-rest';
+var version = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version+'-rest';
 
 var rl = readline.createInterface({
   input: process.stdin,

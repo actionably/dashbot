@@ -28,7 +28,7 @@ app.get(webHookPath, function(req, res) {
   res.send('Error, wrong validation token');
 });
 
-function sendMessage(sender, text) {
+function sendMessage(sender, text, dashbotOnly) {
   const requestData = {
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
@@ -41,9 +41,13 @@ function sendMessage(sender, text) {
       }
     }
   };
-  request(requestData, function(error, response, body) {
-    dashbot.logOutgoing(requestData, response.body);
-  });
+  if (!dashbotOnly) {
+    request(requestData, function(error, response, body) {
+      dashbot.logOutgoing(requestData, response.body);
+    });
+  } else {
+    dashbot.logOutgoing(requestData);
+  }
 }
 
 app.post(webHookPath, function(req, res) {
@@ -57,12 +61,9 @@ app.post(webHookPath, function(req, res) {
       return;
     }
     sendMessage(sender, 'You are right when you say: ' + text);
-    setTimeout(function() {
-      sendMessage(sender, 'Change my mind. You are wrong when you say: ' + text);
-    }, 5000);
-    setTimeout(function() {
-      sendMessage(sender, 'Now I do not know what to think');
-    }, 20000);
+    setInterval(function() {
+      sendMessage(sender, 'Change my mind. You are wrong when you say: ' + text, true);
+    }, 1000);
   }
   res.sendStatus(200);
 });

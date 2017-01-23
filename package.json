@@ -8,10 +8,12 @@
     "url": "git+https://github.com/actionably/dashbot.git"
   },
   "scripts": {
-    "facebook": "nodemon -r dotenv/config src/facebook-example-full.js",
+    "facebook": "nodemon -r dotenv/config src/facebook-example.js",
+    "facebook-repeat": "nodemon -r dotenv/config src/facebook-example-with-delay.js",
     "generic": "nodemon -r dotenv/config src/generic-example.js",
     "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
     "slack": "nodemon -r dotenv/config src/slack-example.js",
+    "slack-repeat": "REPEAT=true nodemon -r dotenv/config src/slack-example-rest.js",
     "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js",
     "google": "nodemon -r dotenv/config src/google-example-api-ai.js"
   },
