@@ -577,13 +577,11 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
 
   that.logIncoming = function(event, context) {
     let timestamp = new Date().getTime();
-    console.log('got here')
     var data = {
       dashbot_timestamp: timestamp,
       event: event,
       context: context
     };
-    console.log(data);
     return internalLogIncoming(data, 'npm');
   };
 
@@ -595,7 +593,6 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
       context: context,
       response: response
     };
-    console.log(data);
     return internalLogOutgoing(data, 'npm');
   };
 }
