@@ -8,7 +8,7 @@
     "url": "git+https://github.com/actionably/dashbot.git"
   },
   "scripts": {
-    "facebook": "nodemon -r dotenv/config src/facebook-example-full.js",
+    "facebook": "nodemon -r dotenv/config src/facebook-example.js",
     "generic": "nodemon -r dotenv/config src/generic-example.js",
     "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
     "slack": "nodemon -r dotenv/config src/slack-example.js",
