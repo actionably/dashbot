@@ -5,6 +5,7 @@ var uuid = require('node-uuid');
 var _ = require('lodash');
 var util = require('util');
 var fs = require('fs');
+var meld = require('meld');
 
 var VERSION = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version;
 
@@ -594,6 +595,46 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
       response: response
     };
     return internalLogOutgoing(data, 'npm');
+  };
+
+  const setupContextAspect = function(context, event, logIncoming) {
+    // send off any successes that used the context to respond
+    meld.around(context, 'succeed', function(joinpoint) {
+      const responseBody = joinpoint.args[0];
+      const logOutgoing = that.logOutgoing(event, responseBody);
+
+      // wait for everything to be sent off to dashbot before proceeding due to lambda
+      // not allowing the event loop to drain before terminating execution.
+      Promise.all([logIncoming, logOutgoing]).then(function() {
+        joinpoint.proceed()
+      })
+    })
+
+    // send off any failures that used the context to respond
+    meld.around(context, 'fail', function(joinpoint) {
+      console.log('send error output to dashbot')
+      Promise.all([logIncoming]).then(
+        joinpoint.proceed()
+      )
+    })
+  }
+
+  const setupAspectJoinpoint = function (joinpoint) {
+    const event = joinpoint.args[0];
+    const context = joinpoint.args[1];
+
+    // send off the input event
+    const logIncoming = that.logIncoming(event, context);
+
+    // setup our aspects
+    setupContextAspect(context, event, logIncoming);
+
+    joinpoint.proceed();
+  };
+
+
+  that.handler = function(handler) {
+    return meld.around(handler, setupAspectJoinpoint)
   };
 }
 
