@@ -170,10 +170,18 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
     }, that.printErrors);
   }
 
-  function addTeamInfo(bot, message) {
+  that._addTeamInfo = function addTeamInfo(bot, message) {
     var id = _.cloneDeep(bot.identity);
     delete id.prefs;
     var teamInfo = _.cloneDeep(bot.team_info);
+    if(!teamInfo || !_.get(teamInfo, 'id') || !_.get(teamInfo, 'name')) {
+      // if we are missing any part of the team lets tell ourselves that we dont know what team this is for. its rare
+      // but it can happen.
+      teamInfo = _.merge(teamInfo, {
+        id: _.get(teamInfo, 'id', 'unknown'),
+        name: _.get(teamInfo, 'name', 'unknown')
+      })
+    }
     delete teamInfo.prefs;
     if (!id.id && _.get(teamInfo, 'bot.user_id')) {
       id = {
@@ -192,8 +200,8 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
   function addTeamInfoNoBotkit(bot, team, message) {
     return {
       team: {
-        id: team.id,
-        name: team.name
+        id: _.get(team, 'id', 'unknown'),
+        name: _.get(team, 'name', 'unknown')
       },
       bot: {
         id: (bot.id?bot.id:_.get(team, 'bot.user_id'))
@@ -227,13 +235,13 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
 
   // botkit middleware endpoints
   that.send = function(bot, message, next) {
-    logOutgoingInternal(addTeamInfo(bot, message), 'botkit');
+    logOutgoingInternal(that._addTeamInfo(bot, message), 'botkit');
     next();
   };
 
   // botkit middleware endpoints
   that.receive = function(bot, message, next) {
-    logIncomingInternal(addTeamInfo(bot, message), 'botkit');
+    logIncomingInternal(that._addTeamInfo(bot, message), 'botkit');
     next();
   };
 }
@@ -509,7 +517,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   }
 
   that.logIncoming = function(requestBody) {
-    let timestamp = new Date().getTime();
+    var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       message: requestBody
@@ -518,10 +526,10 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   };
 
   that.logOutgoing = function(requestBody, message) {
-    let userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
-    let conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
+    var userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
+    var conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
 
-    let timestamp = new Date().getTime();
+    var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       user: {
@@ -576,7 +584,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
   }
 
   that.logIncoming = function(event, context) {
-    let timestamp = new Date().getTime();
+    var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       event: event,
@@ -586,7 +594,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
   };
 
   that.logOutgoing = function(event, response, context) {
-    let timestamp = new Date().getTime();
+    var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       event: event,
