@@ -12,14 +12,14 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
+const fetch = require('isomorphic-fetch');
 const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
 
 const app = express();
 app.use(bodyParser.json());
 
-var webHookPath = '/facebook/receive/';
+var webHookPath = '/webhook';
 app.get(webHookPath, function(req, res) {
   if (req.query['hub.verify_token'] === process.env.FACEBOOK_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
@@ -51,11 +51,21 @@ app.post(webHookPath, function(req, res) {
         }
       }
     };
-    request(requestData, function(error, response, body) {
-      dashbot.logOutgoing(requestData, response.body);
+    fetch(requestData.url + '?access_token=' + requestData.qs.access_token, {
+      method: requestData.method,
+      body: JSON.stringify(requestData.json),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(function(response) {
+      console.log("response", response)
+      if(response.ok) {
+        res.sendStatus(200);
+        dashbot.logOutgoing(requestData, response.json());
+      }
     });
   }
-  res.sendStatus(200);
+
 });
 
 var port = 4000;
