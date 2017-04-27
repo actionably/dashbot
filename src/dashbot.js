@@ -1,30 +1,18 @@
 'use strict';
 
-require('es6-promise').polyfill()
-var fetch = require('isomorphic-fetch')
-var uuid = require('uuid');
+var rp = require('request-promise');
+var uuid = require('node-uuid');
 var _ = require('lodash');
 var util = require('util');
+var fs = require('fs');
 
-var VERSION = require('../package.json').version;
+var VERSION = JSON.parse(fs.readFileSync(__dirname+'/../package.json')).version;
 
 function makeRequest(data, printErrors) {
   if (printErrors) {
-    return fetch(data.uri, {
-      method: data.method,
-      body: JSON.stringify(data.json),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
+    return rp(data);
   } else {
-    fetch(data.uri, {
-      method: data.method,
-      body: JSON.stringify(data.json),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).catch(function(err) {
+    rp(data).catch(function(err) {
       // ignore
     });
   }
