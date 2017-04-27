@@ -8,7 +8,7 @@ if (!process.env.SLACK_BOT_TOKEN) {
 }
 
 const botkit = require('botkit');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_SLACK,
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_SLACK,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug: true}).slack;
 
 const cJSON = require('circular-json');

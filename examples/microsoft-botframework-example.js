@@ -54,7 +54,7 @@ var dashbotApiMap = {
 };
 
 
-const dashbot = require('./dashbot')(dashbotApiMap,{debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).microsoft;
+const dashbot = require('../src/dashbot')(dashbotApiMap,{debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).microsoft;
 dashbot.setFacebookToken(process.env.FACEBOOK_PAGE_TOKEN); // only needed for Facebook Bots
 bot.use(dashbot);
 

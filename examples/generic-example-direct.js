@@ -6,8 +6,6 @@ if (!process.env.DASHBOT_API_KEY_GENERIC) {
 
 var request = require('request');
 var readline = require('readline');
-var version = '0.7.3-rest';
-
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout

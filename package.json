@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "0.8.6",
+  "version": "9.0.0-2",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -8,13 +8,13 @@
     "url": "git+https://github.com/actionably/dashbot.git"
   },
   "scripts": {
-    "facebook": "nodemon -r dotenv/config src/facebook-example.js",
-    "generic": "nodemon -r dotenv/config src/generic-example.js",
-    "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
-    "slack": "nodemon -r dotenv/config src/slack-example.js",
-    "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js",
-    "google": "nodemon -r dotenv/config src/google-example-api-ai.js",
-    "alexa": "nodemon -r dotenv/config src/alexa-webhook-example.js"
+    "facebook": "nodemon -r dotenv/config examples/facebook-example.js",
+    "generic": "nodemon -r dotenv/config examples/generic-example.js",
+    "kik": "nodemon -r dotenv/config examples/kik-example-npm.js",
+    "slack": "nodemon -r dotenv/config examples/slack-example.js",
+    "microsoft": "nodemon -r dotenv/config examples/microsoft-botframework-example.js",
+    "google": "nodemon -r dotenv/config examples/google-example-api-ai.js",
+    "alexa": "nodemon -r dotenv/config examples/alexa-webhook-example.js"
   },
   "keywords": [
     "bot",
@@ -48,9 +48,10 @@
     "websocket": "1.0.23"
   },
   "dependencies": {
+    "es6-promise": "4.1.0",
+    "isomorphic-fetch": "2.2.1",
     "lodash": "4.12.0",
-    "node-uuid": "1.4.7",
-    "request": "2.72.0",
-    "request-promise": "3.0.0"
+    "meld": "1.3.2",
+    "uuid": "3.0.1"
   }
 }

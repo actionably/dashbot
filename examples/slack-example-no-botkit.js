@@ -7,7 +7,7 @@ if (!process.env.SLACK_BOT_TOKEN) {
   throw new Error('"SLACK_BOT_TOKEN" environment variable must be defined');
 }
 
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_SLACK,
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_SLACK,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).slack;
 const request = require('request');
 var WebSocketClient = require('websocket').client;

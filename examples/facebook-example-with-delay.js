@@ -13,7 +13,7 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
 
 const app = express();
