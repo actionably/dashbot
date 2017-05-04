@@ -8,7 +8,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
 
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).google;
 
 var app = express();

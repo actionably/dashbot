@@ -10,7 +10,7 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
   throw new Error('"FACEBOOK_PAGE_TOKEN" environment variable must be defined');
 }
 
-var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
+var dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).facebook;
 
 

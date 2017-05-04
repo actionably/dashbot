@@ -12,14 +12,14 @@ if (!process.env.FACEBOOK_PAGE_TOKEN) {
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
+const fetch = require('isomorphic-fetch');
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
 
 const app = express();
 app.use(bodyParser.json());
 
-var webHookPath = '/facebook/receive/';
+var webHookPath = '/webhook';
 app.get(webHookPath, function(req, res) {
   if (req.query['hub.verify_token'] === process.env.FACEBOOK_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
@@ -27,24 +27,6 @@ app.get(webHookPath, function(req, res) {
   }
   res.send('Error, wrong validation token');
 });
-
-function sendMessage(sender, text) {
-  const requestData = {
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
-    method: 'POST',
-    json: {
-      dashbotTemplateId: 'right',
-      recipient: {id: sender},
-      message: {
-        text: text
-      }
-    }
-  };
-  request(requestData, function(error, response, body) {
-    dashbot.logOutgoing(requestData, response.body);
-  });
-}
 
 app.post(webHookPath, function(req, res) {
   dashbot.logIncoming(req.body);
@@ -54,17 +36,36 @@ app.post(webHookPath, function(req, res) {
     const sender = event.sender.id;
     const text = event.message.text;
     if (event.message.is_echo) {
+      res.sendStatus(200);
       return;
     }
-    sendMessage(sender, 'You are right when you say: ' + text);
-    setTimeout(function() {
-      sendMessage(sender, 'Change my mind. You are wrong when you say: ' + text);
-    }, 5000);
-    setTimeout(function() {
-      sendMessage(sender, 'Now I do not know what to think');
-    }, 20000);
+    const requestData = {
+      url: 'https://graph.facebook.com/v2.6/me/messages',
+      qs: {access_token: process.env.FACEBOOK_PAGE_TOKEN},
+      method: 'POST',
+      json: {
+        dashbotTemplateId: 'right',
+        recipient: {id: sender},
+        message: {
+          text: 'You are right when you say: ' + text
+        }
+      }
+    };
+    fetch(requestData.url + '?access_token=' + requestData.qs.access_token, {
+      method: requestData.method,
+      body: JSON.stringify(requestData.json),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(function(response) {
+      console.log("response", response)
+      if(response.ok) {
+        res.sendStatus(200);
+        dashbot.logOutgoing(requestData, response.json());
+      }
+    });
   }
-  res.sendStatus(200);
+
 });
 
 var port = 4000;

@@ -8,13 +8,13 @@
     "url": "git+https://github.com/actionably/dashbot.git"
   },
   "scripts": {
-    "facebook": "nodemon -r dotenv/config src/facebook-example.js",
-    "generic": "nodemon -r dotenv/config src/generic-example.js",
-    "kik": "nodemon -r dotenv/config src/kik-example-npm.js",
-    "slack": "nodemon -r dotenv/config src/slack-example.js",
-    "microsoft": "nodemon -r dotenv/config src/microsoft-botframework-example.js",
-    "google": "nodemon -r dotenv/config src/google-example-api-ai.js",
-    "alexa": "nodemon -r dotenv/config src/alexa-webhook-example.js"
+    "facebook": "nodemon -r dotenv/config examples/facebook-example.js",
+    "generic": "nodemon -r dotenv/config examples/generic-example.js",
+    "kik": "nodemon -r dotenv/config examples/kik-example-npm.js",
+    "slack": "nodemon -r dotenv/config examples/slack-example.js",
+    "microsoft": "nodemon -r dotenv/config examples/microsoft-botframework-example.js",
+    "google": "nodemon -r dotenv/config examples/google-example-api-ai.js",
+    "alexa": "nodemon -r dotenv/config examples/alexa-webhook-example.js"
   },
   "keywords": [
     "bot",

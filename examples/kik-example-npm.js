@@ -20,7 +20,7 @@ if (!process.env.KIK_BASE_URL) {
 var util = require('util');
 var http = require('http');
 var Bot = require('@kikinteractive/kik');
-var dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_KIK,
+var dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_KIK,
   {debug: true, urlRoot: process.env.DASHBOT_URL_ROOT}).kik;
 
 // Configure the bot API endpoint, details for your bot

@@ -1,7 +1,7 @@
 'use strict'
 
 var _ = require('lodash');
-var makeRequest = require('make-request')
+var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
 

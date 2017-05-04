@@ -8,7 +8,7 @@ let app = express();
 app.set('port', (process.env.PORT || 8080));
 app.use(bodyParser.json({type: 'application/json'}));
 
-const dashbot = require('./dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).google;
 
 // Create an instance of ApiAiAssistant
