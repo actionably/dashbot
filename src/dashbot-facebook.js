@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var makeRequest = require('./make-request')
+var EventLogger = require('./event-logger')
+var DashBotEventUtil = require('./event-util')
 
 var VERSION = require('../package.json').version;
 
@@ -12,6 +14,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
+  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors)
 
   function logIncomingInternal(data, source, type) {
     type = type || 'incoming'
@@ -60,7 +63,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   };
 
   that.logEvent = function(data) {
-    return logEventInternal(data, 'npm')
+    return that.eventLogger.logEvent(that.platform, data, 'npm');
   }
 
   function getAndRemove(obj, prop) {
@@ -117,6 +120,8 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
     logOutgoingInternal(botkitTransformOutgoing(bot, message), null, 'botkit');
     next();
   };
+
+  that.eventUtil = new DashBotEventUtil()
 
 }
 

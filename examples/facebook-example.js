@@ -14,7 +14,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('isomorphic-fetch');
 const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
-  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook;
+  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook
+const dashbotEventUtil = dashbot.eventUtil
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,7 +30,14 @@ app.get(webHookPath, function(req, res) {
 });
 
 app.post(webHookPath, function(req, res) {
+  const functionTiming = {
+    start: new Date().getTime(),
+    end: null,
+    difference: null
+  }
+
   dashbot.logIncoming(req.body);
+
   const messagingEvents = req.body.entry[0].messaging;
   if (messagingEvents.length && messagingEvents[0].message && messagingEvents[0].message.text) {
     const event = req.body.entry[0].messaging[0];
@@ -58,10 +66,12 @@ app.post(webHookPath, function(req, res) {
         'Content-Type': 'application/json'
       }
     }).then(function(response) {
-      console.log("response", response)
       if(response.ok) {
         res.sendStatus(200);
         dashbot.logOutgoing(requestData, response.json());
+        functionTiming.end = new Date().getTime();
+        functionTiming.difference = functionTiming.end - functionTiming.start;
+        dashbot.logEvent(dashbotEventUtil.createCustomEvent('functionTiming', sender, sender, functionTiming))
       }
     });
   }
