@@ -1,8 +1,5 @@
 'use strict'
 
-var makeRequest = require('./make-request');
-var VERSION = require('../package.json').version;
-
 function DashBotEventUtil() {
   var that = this;
 
@@ -16,6 +13,33 @@ function DashBotEventUtil() {
     }
   }
 
+  that.createPageLaunchEvent = function(userId, conversationId) {
+    return {
+      type: 'pageLaunchEvent',
+      userId: userId,
+      conversationId: conversationId
+    }
+  }
+
+  that.createShareEvent = function(userId, conversationId, sharedMessageJson) {
+    return {
+      type: 'shareEvent',
+      userId: userId,
+      conversationId: conversationId,
+      sharedMessage: sharedMessageJson
+    }
+  }
+
+  that.createRevenueEvent = function(userId, conversationId, amount, referenceNumber, metadata) {
+    return {
+      type: 'revenueEvent',
+      userId: userId,
+      conversationId: conversationId,
+      amount: amount,
+      referenceNumber: referenceNumber,
+      metadata: metadata
+    }
+  }
 }
 
 module.exports = DashBotEventUtil
