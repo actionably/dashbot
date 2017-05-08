@@ -4,45 +4,25 @@ if (!process.env.DASHBOT_API_KEY_GENERIC) {
   throw new Error('"DASHBOT_API_KEY_GENERIC" environment variable must be defined');
 }
 
-var request = require('request');
-var readline = require('readline');
-var version = '0.7.3-rest';
+const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GENERIC,
+  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).generic
 
+var readline = require('readline');
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
 function ask(question) {
-  request({
-    uri: process.env.DASHBOT_URL_ROOT,
-    qs : {
-      type: 'outgoing',
-      platform: 'generic',
-      apiKey: process.env.DASHBOT_API_KEY_GENERIC,
-      v: version
-    },
-    method: 'POST',
-    json: {
-      text: question,
-      userId: 'Joe'
-    }
-  });
+
+  dashbot.logIncoming(
+    dashbot.messageUtil.messageWithText('Joe', question)
+  );
+
   rl.question(question, function(answer) {
-    request({
-      uri: process.env.DASHBOT_URL_ROOT,
-      qs : {
-        type: 'incoming',
-        platform: 'generic',
-        apiKey: process.env.DASHBOT_API_KEY_GENERIC,
-        v: version
-      },
-      method: 'POST',
-      json: {
-        text: answer,
-        userId: 'Joe'
-      }
-    });
+    dashbot.logOutgoing(
+      dashbot.messageUtil.messageWithText('Joe', answer)
+    )
     if (answer === 'quit') {
       rl.close();
       return;

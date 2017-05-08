@@ -11,6 +11,7 @@ var DashBotKik = require('./dashbot-kik')
 var DashBotMicrosoft = require('./dashbot-microsoft')
 var DashBotGoogle = require('./dashbot-google')
 var DashBotAmazonAlexa = require('./dashbot-amazon-alexa')
+var DashBotGeneric = require('./dashbot-generic')
 
 module.exports = function(apiKey, config) {
   if (!apiKey) {
@@ -34,6 +35,7 @@ module.exports = function(apiKey, config) {
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors),
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
     google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors),
-    alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors)
+    alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors),
+    generic: new DashBotGeneric(apiKey, urlRoot, debug, printErrors)
   };
 };
