@@ -72,8 +72,9 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
   };
 
   that.logOutgoing = function(requestBody, message) {
-    var userId = _.get(requestBody,'originalRequest.data.user.user_id') || _.get(requestBody,'user.user_id') || _.get(requestBody, 'id');
-    var conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
+    var userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
+    var conversationId = _.get(requestBody, 'originalRequest.data.conversation.conversation_id')
+      || _.get(requestBody, 'conversation.conversation_id') || _.get(requestBody, 'sessionId');
 
     var timestamp = new Date().getTime();
     var data = {
