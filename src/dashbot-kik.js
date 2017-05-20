@@ -1,6 +1,8 @@
 'use strict'
 
 var _ = require('lodash');
+var util = require('util');
+var uuid = require('uuid');
 var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
