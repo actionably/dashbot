@@ -47,3 +47,10 @@ controller.on('facebook_optin', function(bot, message) {
 controller.on('message_received', function(bot, message) {
   bot.reply(message,  'You are right when you say '+message.text);
 });
+
+controller.hears('hello world', 'message_received', function(bot, message) {
+  // add template tag to the next message sent
+  dashbot.addTemplateTag(message, 'hello-world');
+
+  bot.reply(message, 'hi');
+});
