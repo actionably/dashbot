@@ -66,25 +66,17 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
     var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
-      message: requestBody
+      request_body:requestBody
     };
     internalLogIncoming(data, 'npm');
   };
 
   that.logOutgoing = function(requestBody, message) {
-    var userId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.user.user_id') : _.get(requestBody,'user.user_id');
-    var conversationId = _.has(requestBody, 'originalRequest') ? _.get(requestBody,'originalRequest.data.conversation.conversation_id') : _.get(requestBody,'conversation.conversation_id');
-
     var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
-      user: {
-        user_id: userId
-      },
-      conversation: {
-        conversation_id: conversationId
-      },
-      message: message
+      request_body:requestBody,
+      message:message
     };
     internalLogOutgoing(data, 'npm');
   };
