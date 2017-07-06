@@ -12,6 +12,13 @@ var DashBotMicrosoft = require('./dashbot-microsoft')
 var DashBotGoogle = require('./dashbot-google')
 var DashBotAmazonAlexa = require('./dashbot-amazon-alexa')
 var DashBotGeneric = require('./dashbot-generic')
+var DashBotTwitter = require('./dashbot-twitter')
+var DashBotLine = require('./dashbot-line')
+var DashBotRecast = require('./dashbot-recast')
+var DashBotSkype = require('./dashbot-skype')
+var DashBotViber = require('./dashbot-viber')
+var DashBotWechat = require('./dashbot-wechat')
+
 
 module.exports = function(apiKey, config) {
   if (!apiKey) {
@@ -36,6 +43,12 @@ module.exports = function(apiKey, config) {
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors),
     google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors),
     alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors),
-    generic: new DashBotGeneric(apiKey, urlRoot, debug, printErrors)
+    generic: new DashBotGeneric(apiKey, urlRoot, debug, printErrors),
+    twitter: new DashBotTwitter(apiKey, urlRoot, debug, printErrors),
+    line: new DashBotLine(apiKey, urlRoot, debug, printErrors),
+    recast: new DashBotRecast(apiKey, urlRoot, debug, printErrors),
+    skype: new DashBotSkype(apiKey, urlRoot, debug, printErrors),
+    viber: new DashBotViber(apiKey, urlRoot, debug, printErrors),
+    wechat: new DashBotWechat(apiKey, urlRoot, debug, printErrors)
   };
 };
