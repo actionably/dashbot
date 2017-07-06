@@ -36,6 +36,7 @@ module.exports = function(apiKey, config) {
       printErrors = config.printErrors;
     }
   }
+
   return {
     facebook: new DashBotFacebook(apiKey, urlRoot, debug, printErrors),
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors),
