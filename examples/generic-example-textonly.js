@@ -14,26 +14,14 @@ var rl = readline.createInterface({
 });
 
 function ask(question) {
-  const messageForDashbot = {
-    "text": question,
-    "userId": "USERIDHERE123123",
-    "conversationId": "GROUPCHATID234",
-    "platformJson": {
-      "whateverJson": "any JSON specific to your platform can be stored here"
-    }
-  };
-  dashbot.logOutgoing(messageForDashbot);
+  dashbot.logOutgoing(
+    dashbot.messageUtil.messageWithText('USERIDHERE111', question)
+  );
 
   rl.question(question, function(answer) {
-    const messageForDashbot = {
-      "text": answer,
-      "userId": "USERIDHERE123123",
-      "conversationId": "GROUPCHATID234",
-      "platformJson": {
-        "whateverJson": "any JSON specific to your platform can be stored here"
-      }
-    };
-    dashbot.logIncoming(messageForDashbot);
+    dashbot.logIncoming(
+      dashbot.messageUtil.messageWithText('USERIDHERE111', answer)
+    )
     if (answer === 'quit') {
       rl.close();
       return;
