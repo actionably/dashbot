@@ -14,7 +14,8 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
-  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors)
+  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors);
+  that.templateIds = {};
 
   function logIncomingInternal(data, source, type) {
     type = type || 'incoming'
@@ -66,6 +67,13 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
     return that.eventLogger.logEvent(that.platform, data, 'npm');
   }
 
+  that.addTemplateTag = function(message, templateId) {
+    if (!that.templateIds[message.channel]) {
+      that.templateIds[message.channel] = [];
+    }
+    that.templateIds[message.channel].push(templateId);
+  }
+
   function getAndRemove(obj, prop) {
     var temp = obj[prop];
     delete obj[prop];
@@ -100,6 +108,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
         access_token: bot.botkit.config.access_token
       },
       json: {
+        dashbotTemplateId: that.templateIds[message.channel] ? that.templateIds[message.channel].shift() : undefined,
         recipient: {
           id: channel
         },
