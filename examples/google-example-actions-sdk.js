@@ -6,7 +6,7 @@ if (!process.env.DASHBOT_API_KEY_GOOGLE) {
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var ActionsSdkAssistant = require('actions-on-google').ActionsSdkAssistant;
+var ActionsSdkApp = require('actions-on-google').ActionsSdkApp;
 
 const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
   {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).google;
@@ -14,6 +14,10 @@ const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
 var app = express();
 
 app.use(bodyParser.json());
+
+app.get('/helloAction', function (request, response) {
+  helloAction(request, response);
+});
 
 app.post('/helloAction', function (request, response) {
   helloAction(request, response);
@@ -33,7 +37,7 @@ var server = app.listen(process.env.PORT || '8090', function () {
 });
 
 function helloAction(request, response) {
-  const assistant = new ActionsSdkAssistant({request: request, response: response});
+  const assistant = new ActionsSdkApp({request: request, response: response});
   dashbot.configHandler(assistant);
 
   if (assistant.getRawInput().toLowerCase() == "talk to hello action")

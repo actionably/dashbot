@@ -14,7 +14,10 @@
     "slack": "nodemon -r dotenv/config examples/slack-example.js",
     "microsoft": "nodemon -r dotenv/config examples/microsoft-botframework-example.js",
     "google": "nodemon -r dotenv/config examples/google-example-api-ai.js",
-    "alexa": "nodemon -r dotenv/config examples/alexa-webhook-example.js"
+    "google-dialog-flow": "nodemon -r dotenv/config examples/google-example-dialog-flow.js",
+    "google-actions": "nodemon -r dotenv/config examples/google-example-actions-sdk.js",
+    "alexa": "nodemon -r dotenv/config examples/alexa-webhook-example.js",
+    "test": "mocha $(find src -name '*.js' | grep __tests__)"
   },
   "keywords": [
     "bot",
@@ -35,8 +38,9 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
-    "actions-on-google": "1.0.1",
+    "actions-on-google": "1.5.1",
     "assert": "1.4.1",
+    "assert-object": "1.0.0",
     "body-parser": "1.15.0",
     "botbuilder": "3.4.4",
     "botkit": "0.2.2",
@@ -52,6 +56,8 @@
     "isomorphic-fetch": "2.2.1",
     "lodash": "4.12.0",
     "meld": "1.3.2",
+    "redact-pii": "1.3.1",
+    "traverse": "0.6.6",
     "uuid": "3.0.1"
   }
 }

@@ -1,10 +1,10 @@
 'use strict';
 
 // Boilerplate setup
-let ApiAiAssistant = require('actions-on-google').ApiAiAssistant;
-let express = require('express');
-let bodyParser = require('body-parser');
-let app = express();
+const DialogflowApp = require('actions-on-google').DialogflowApp;
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
 app.set('port', (process.env.PORT || 8080));
 app.use(bodyParser.json({type: 'application/json'}));
 
@@ -13,7 +13,7 @@ const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
 
 // Create an instance of ApiAiAssistant
 app.post('/', function (request, response) {
-  const assistant = new ApiAiAssistant(
+  const assistant = new DialogflowApp(
     {request: request, response: response});
 
     dashbot.configHandler(assistant);
@@ -24,21 +24,21 @@ app.post('/', function (request, response) {
     const NUMBER_ARGUMENT = 'number'; //the parameter name for the number
 
     function welcomeIntent(assistant){
-      assistant.ask('Welcome to action snippets. say a number')
+      assistant.ask('Welcome repeat a number. Please, say a number')
     }
     function numberIntent(assistant){
-      let number = assistant.getArgument(NUMBER_ARGUMENT)
-      assistant.tell('You said' + number)
+      const number = assistant.getArgument(NUMBER_ARGUMENT)
+      assistant.tell('You said ' + number)
     }
 
-    let actionMap = new Map();
+    const actionMap = new Map();
     actionMap.set(WELCOME_INTENT, welcomeIntent);
     actionMap.set(NUMBER_INTENT, numberIntent);
     assistant.handleRequest(actionMap);
 })
 
 // Start the server
-let server = app.listen(app.get('port'), function () {
+const server = app.listen(app.get('port'), function () {
   console.log('App listening on port %s', server.address().port);
   console.log('Press Ctrl+C to quit.');
 });

@@ -68,7 +68,9 @@ app.post(webHookPath, function(req, res) {
     }).then(function(response) {
       if(response.ok) {
         res.sendStatus(200);
-        dashbot.logOutgoing(requestData, response.json());
+        response.json().then(function(responseJson) {
+          dashbot.logOutgoing(requestData, responseJson);
+        })
         functionTiming.end = new Date().getTime();
         functionTiming.difference = functionTiming.end - functionTiming.start;
         dashbot.logEvent(dashbotEventUtil.createCustomEvent('functionTiming', sender, sender, functionTiming))
