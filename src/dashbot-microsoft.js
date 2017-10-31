@@ -5,13 +5,14 @@ var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
 
-function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
+function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKeyMap = apiKeyMap;
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
   that.facebookToken = null;
+  that.config = config;
 
   // facebook token hack
   that.setFacebookToken = function(token){
@@ -68,7 +69,7 @@ function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
 
     next();
   }

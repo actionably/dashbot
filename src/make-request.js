@@ -3,9 +3,9 @@
 const fetch = require('isomorphic-fetch')
 const redactor = require('./redactor')
 
-module.exports = function (data, printErrors) {
+module.exports = function (data, printErrors, redact) {
   let body = data.json
-  if (body && process.env.DASHBOT_REDACT === 'true') {
+  if (body && redact) {
     body = redactor.redact(body)
   }
   const p = fetch(data.uri, {

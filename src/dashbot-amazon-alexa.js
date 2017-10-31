@@ -6,13 +6,14 @@ var meld = require('meld');
 
 var VERSION = require('../package.json').version;
 
-function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
+function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'alexa';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
+  that.config = config;
 
   that.requestBody = null;
 
@@ -28,7 +29,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   function internalLogOutgoing(data, source) {
@@ -42,7 +43,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   that.logIncoming = function(event, context) {

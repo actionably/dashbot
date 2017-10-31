@@ -5,13 +5,14 @@ var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
 
-function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
+function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'google';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
+  that.config = config;
 
   that.assistantHandle = null;
   that.requestBody = null;
@@ -45,7 +46,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   function internalLogOutgoing(data, source) {
@@ -59,7 +60,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   that.logIncoming = function(requestBody) {

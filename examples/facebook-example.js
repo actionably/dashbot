@@ -14,7 +14,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fetch = require('isomorphic-fetch');
 const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
-  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).facebook
+  {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT, redact: process.env.DASHBOT_REDACT}).facebook
 const dashbotEventUtil = dashbot.eventUtil
 
 const app = express();

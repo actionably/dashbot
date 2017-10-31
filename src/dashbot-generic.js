@@ -6,14 +6,15 @@ var DashBotEventUtil = require('./event-util')
 
 var VERSION = require('../package.json').version;
 
-function DashBotGeneric(apiKey, urlRoot, debug, printErrors) {
+function DashBotGeneric(platform, apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
-  that.platform = 'generic';
+  that.platform = platform;
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
-  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors)
+  that.config = config;
+  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors, config)
   that.eventUtil = new DashBotEventUtil()
   that.messageUtil = {
     messageWithText: function(userId, text, conversationId) {
@@ -38,7 +39,7 @@ function DashBotGeneric(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   };
 
   function logOutgoingInternal(data, source) {
@@ -52,7 +53,7 @@ function DashBotGeneric(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   };
 
   that.logIncoming = function(data) {

@@ -5,13 +5,14 @@ var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
 
-function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
+function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'slack';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
+  that.config = config;
 
   function logIncomingInternal(data, source) {
     if (data.message.type === 'reconnect_url') {
@@ -28,7 +29,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   function logOutgoingInternal(data, source) {
@@ -43,7 +44,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   that._addTeamInfo = function addTeamInfo(bot, message) {
@@ -98,7 +99,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   };
 
   that.logIncoming = function(bot, team, message) {

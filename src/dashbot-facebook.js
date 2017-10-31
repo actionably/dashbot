@@ -7,14 +7,15 @@ var DashBotEventUtil = require('./event-util')
 
 var VERSION = require('../package.json').version;
 
-function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
+function DashBotFacebook(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'facebook';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
-  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors)
+  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors, config);
+  that.config = config;
 
   function logIncomingInternal(data, source, type) {
     type = type || 'incoming'
@@ -28,7 +29,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   };
 
   function logOutgoingInternal(data, responseBody, source) {
@@ -44,7 +45,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   };
 
   /*

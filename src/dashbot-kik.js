@@ -5,14 +5,14 @@ var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
 
-function DashBotKik(apiKey, urlRoot, debug, printErrors) {
+function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.platform = 'kik';
   that.urlRoot = urlRoot;
   that.debug = debug;
   that.printErrors = printErrors;
-
+  that.config = config;
   that.botHandle = null;
   that.kikUsername = null;
   that.kikApiKey = null;
@@ -112,7 +112,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   function internalLogOutgoing(data, source) {
@@ -126,7 +126,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 
   that.logIncoming = function(kikApiKey, botUsername, message) {

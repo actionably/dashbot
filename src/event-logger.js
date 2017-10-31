@@ -3,12 +3,13 @@
 var makeRequest = require('./make-request');
 var VERSION = require('../package.json').version;
 
-function DashBotEventLogger(apiKey, urlRoot, debug, printErrors) {
+function DashBotEventLogger(apiKey, urlRoot, debug, printErrors, config) {
   var that = this;
   that.apiKey = apiKey;
   that.debug = debug;
   that.urlRoot = urlRoot;
   that.printErrors = printErrors;
+  that.config = config;
 
   that.logEvent = function(platform, data, source) {
     var url = that.urlRoot + '?apiKey=' +
@@ -21,7 +22,7 @@ function DashBotEventLogger(apiKey, urlRoot, debug, printErrors) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors);
+    }, that.printErrors, that.config.redact);
   }
 }
 
