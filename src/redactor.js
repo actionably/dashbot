@@ -1,5 +1,5 @@
 const traverse = require('traverse')
-const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null})
+const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null, digits: null})
 const _ = require('lodash')
 
 const PATH_DESCRIPTIONS = [
