@@ -17,7 +17,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
   that.assistantHandle = null;
   that.requestBody = null;
 
-  that.configHandler = function(assistant){
+  that.configHandler = function(assistant, incomingMetadata){
     if (assistant == null) {
       throw new Error('YOU MUST SUPPLY THE ASSISTANT OBJECT TO DASHBOT!');
     }
@@ -27,11 +27,12 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     that.assistantHandle.doResponse_ = dashbotDoResponse;
 
     that.requestBody = assistant.body_;
-    that.logIncoming(assistant.body_);
+    that.logIncoming(assistant.body_, incomingMetadata);
   };
 
   function dashbotDoResponse(response, responseCode){
-    that.logOutgoing(that.requestBody, response)
+    that.logOutgoing(that.requestBody, response, that.outgoingMetadata)
+    that.outgoingMetadata = null
     that.assistantHandle.originalDoResponse(response, responseCode);
   }
 
@@ -63,22 +64,32 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     }, that.printErrors, that.config.redact);
   }
 
-  that.logIncoming = function(requestBody) {
+  that.setOutgoingMetadata = function(outgoingMetadata) {
+    that.outgoingMetadata = outgoingMetadata
+  }
+
+  that.logIncoming = function(requestBody, metadata) {
     var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       request_body:requestBody
     };
+    if (metadata) {
+      data.metadata = metadata
+    }
     internalLogIncoming(data, 'npm');
   };
 
-  that.logOutgoing = function(requestBody, message) {
+  that.logOutgoing = function(requestBody, message, metadata) {
     var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
       request_body:requestBody,
       message:message
     };
+    if (metadata) {
+      data.metadata = metadata
+    }
     internalLogOutgoing(data, 'npm');
   };
 }

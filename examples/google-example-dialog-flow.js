@@ -9,14 +9,17 @@ app.set('port', (process.env.PORT || 8080));
 app.use(bodyParser.json({type: 'application/json'}));
 
 const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_GOOGLE,
-  {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true}).google;
+  {urlRoot: process.env.DASHBOT_URL_ROOT, debug:true, redact: process.env.DASHBOT_REDACT}).google;
 
 // Create an instance of ApiAiAssistant
 app.post('/', function (request, response) {
   const assistant = new DialogflowApp(
     {request: request, response: response});
 
-    dashbot.configHandler(assistant);
+    // second paramter is optional metadata
+    dashbot.configHandler(assistant, {
+      we: 'like incoming metadata'
+    });
 
     // Create functions to handle requests here
     const WELCOME_INTENT = 'input.welcome';  // the action name from the API.AI intent
@@ -28,6 +31,10 @@ app.post('/', function (request, response) {
     }
     function numberIntent(assistant){
       const number = assistant.getArgument(NUMBER_ARGUMENT)
+      // optianally set metadata
+      dashbot.setOutgoingMetadata({
+        we: 'also like outgoing metadata'
+      })
       assistant.tell('You said ' + number)
     }
 
