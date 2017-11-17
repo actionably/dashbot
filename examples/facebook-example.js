@@ -39,7 +39,7 @@ app.post(webHookPath, function(req, res) {
   dashbot.logIncoming(req.body);
 
   const messagingEvents = req.body.entry[0].messaging;
-  if (messagingEvents.length && messagingEvents[0].message && messagingEvents[0].message.text) {
+  if (messagingEvents && messagingEvents.length && messagingEvents[0].message && messagingEvents[0].message.text) {
     const event = req.body.entry[0].messaging[0];
     const sender = event.sender.id;
     const text = event.message.text;
@@ -76,6 +76,9 @@ app.post(webHookPath, function(req, res) {
         dashbot.logEvent(dashbotEventUtil.createCustomEvent('functionTiming', sender, sender, functionTiming))
       }
     });
+  } else {
+    res.sendStatus(200);
+    return;
   }
 
 });
