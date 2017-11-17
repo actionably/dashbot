@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
+		"@kikinteractive/kik": "2.2.1",
     "actions-on-google": "1.5.1",
     "assert": "1.4.1",
     "assert-object": "1.0.0",

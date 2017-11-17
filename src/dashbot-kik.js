@@ -1,6 +1,7 @@
 'use strict'
 
 var _ = require('lodash');
+var uuid = require('uuid')
 var makeRequest = require('./make-request')
 
 var VERSION = require('../package.json').version;
@@ -39,7 +40,7 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
     next();
   };
   function dashBotSend(messages, recipient, chatId) {
-    if (!!messages && !util.isArray(messages)) {
+    if (!!messages && !_.isArray(messages)) {
       messages = [messages];
     }
     var newMessages = _.map(messages, messageToObject);
@@ -57,10 +58,10 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
 
   function messageToObject(message) {
     var messageObj = {};
-    if (util.isFunction(message.toJSON)) {
+    if (_.isFunction(message.toJSON)) {
       Object.assign(messageObj, message.toJSON());
     }
-    else if (util.isString(message)) {
+    else if (_.isString(message)) {
       Object.assign(messageObj, {'type': 'text', 'body': message});
     }
     else {
@@ -80,13 +81,13 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   function dashBotBroadcast(messages, recipients) {
-    if (!!messages && !util.isArray(messages)) {
+    if (!!messages && !_.isArray(messages)) {
       messages = [messages];
     }
 
     var newMessages = _.map(messages, messageToObject);
     if (recipients) {
-      if (!!recipients && !util.isArray(recipients)) {
+      if (!!recipients && !_.isArray(recipients)) {
         recipients = [recipients];
       }
 
