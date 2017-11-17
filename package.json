@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "9.4.0",
+  "version": "9.4.1",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
-		"@kikinteractive/kik": "2.2.1",
+    "@kikinteractive/kik": "2.2.1",
     "actions-on-google": "1.5.1",
     "assert": "1.4.1",
     "assert-object": "1.0.0",
