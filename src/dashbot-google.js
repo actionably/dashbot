@@ -22,7 +22,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       throw new Error('YOU MUST SUPPLY THE ASSISTANT OBJECT TO DASHBOT!');
     }
     that.assistantHandle = assistant;
-    if (app.getArgument("is_health_check")) {
+    if (!that.assistantHandle.getArgument("is_health_check")) {
       that.assistantHandle.originalDoResponse = assistant.doResponse_;
       that.assistantHandle.doResponse_ = dashbotDoResponse;
 
