@@ -16,7 +16,15 @@ module.exports = function (data, printErrors, redact) {
     }
   })
   if (printErrors) {
-    return p
+    return p.then(function(response) {
+      if (response.status === 400) {
+        return response.text().then(function(text)  {
+          console.log('validation error: ', text)
+          return response
+        })
+      }
+      return response
+    })
   } else {
     p.catch(function(err) {
       // ignore

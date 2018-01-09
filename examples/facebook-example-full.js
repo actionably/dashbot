@@ -19,7 +19,7 @@ const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_FACEBOOK,
 const app = express();
 app.use(bodyParser.json());
 
-var webHookPath = '/facebook/receive/';
+var webHookPath = '/webhook/';
 app.get(webHookPath, function(req, res) {
   if (req.query['hub.verify_token'] === process.env.FACEBOOK_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
