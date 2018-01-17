@@ -12,15 +12,16 @@ var DashBotGeneric = require('./dashbot-generic')
 
 
 module.exports = function(apiKey, config) {
+  apiKey = process.env.DASHBOT_API_KEY_OVERRIDE || apiKey;
   if (!apiKey) {
     throw new Error('YOU MUST SUPPLY AN API_KEY TO DASHBOT!');
   }
-  var serverRoot = 'https://tracker.dashbot.io';
+  var serverRoot = process.env.DASHBOT_SERVER_ROOT || 'https://tracker.dashbot.io';
   var urlRoot = serverRoot + '/track';
-  var debug = false;
+  var debug = process.env.DASHBOT_DEBUG === 'true' || false;
   var printErrors = true;
   if (config) {
-    debug = config.debug;
+    debug = config.debug || debug;
     serverRoot = config.serverRoot || serverRoot;
     urlRoot = config.urlRoot || serverRoot + '/track';
     if (config.printErrors !== undefined) {

@@ -1,0 +1,14 @@
+{
+	"HelloWorld": {
+		"gitUrl": "https://github.com/actionably/skill-sample-nodejs-hello-world.git"
+	},
+	"Fact": {
+		"gitUrl": "https://github.com/actionably/skill-sample-nodejs-fact.git"
+	},
+	"City": {
+		"gitUrl": "https://github.com/actionably/skill-sample-nodejs-city-guide.git"
+	},
+	"Trivia": {
+		"gitUrl": "https://github.com/actionably/skill-sample-nodejs-trivia.git"
+	}
+}
