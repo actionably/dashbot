@@ -67,10 +67,27 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     return internalLogOutgoing(data, 'npm');
   };
 
+  that.setOutgoingIntent = function(intent) {
+    that.outgoingIntent = intent
+  }
+
+  that.setOutgoingMetadata = function(metadata) {
+    that.outgoingMetadata = metadata
+  }
+
   const setupContextAspect = function(context, event, logIncoming) {
     // send off any successes that used the context to respond
     meld.around(context, 'succeed', function(joinpoint) {
-      const responseBody = joinpoint.args[0];
+      let responseBody = joinpoint.args[0];
+      if (that.outgoingIntent || that.outgoingMetadata) {
+        responseBody = _.clone(responseBody)
+        if (that.outgoingIntent) {
+          responseBody.intent = that.outgoingIntent
+        }
+        if (that.outgoingMetadata) {
+          responseBody.metadata = that.outgoingMetadata
+        }
+      }
       const logOutgoing = that.logOutgoing(event, responseBody);
 
       // wait for everything to be sent off to dashbot before proceeding due to lambda
