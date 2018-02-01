@@ -75,62 +75,88 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     that.outgoingMetadata = metadata
   }
 
-  const setupContextAspect = function(context, event, logIncoming) {
+
+  const handleSuccess = function(joinpoint, event, responseBody, logIncoming) {
+    if (that.outgoingIntent || that.outgoingMetadata) {
+      responseBody = _.clone(responseBody)
+      if (that.outgoingIntent) {
+        responseBody.intent = that.outgoingIntent
+      }
+      if (that.outgoingMetadata) {
+        responseBody.metadata = that.outgoingMetadata
+      }
+    }
+    const logOutgoing = that.logOutgoing(event, responseBody);
+    that.outgoingIntent = null
+    that.outgoingMetadata = null
+
+    // wait for everything to be sent off to dashbot before proceeding due to lambda
+    // not allowing the event loop to drain before terminating execution.
+    Promise.all([logIncoming, logOutgoing]).then(function() {
+      joinpoint.proceed();
+    }).catch(function(errors) {
+      if(that.printErrors) {
+        console.error(errors);
+      }
+      // otherwise do nothing and continue with their code.
+    })
+  }
+
+  const handleFailure = function(joinpoint, logIncoming) {
+    Promise.all([logIncoming]).then(function() {
+      joinpoint.proceed();
+    }).catch(function(errors) {
+      if(that.printErrors)
+        console.error(errors);
+    })
+
+  }
+
+  const setupContextAspect = function(context, event, callback, logIncoming) {
     // send off any successes that used the context to respond
     meld.around(context, 'succeed', function(joinpoint) {
-      let responseBody = joinpoint.args[0];
-      if (that.outgoingIntent || that.outgoingMetadata) {
-        responseBody = _.clone(responseBody)
-        if (that.outgoingIntent) {
-          responseBody.intent = that.outgoingIntent
-        }
-        if (that.outgoingMetadata) {
-          responseBody.metadata = that.outgoingMetadata
-        }
-      }
-      const logOutgoing = that.logOutgoing(event, responseBody);
-      that.outgoingIntent = null
-      that.outgoingMetadata = null
-
-      // wait for everything to be sent off to dashbot before proceeding due to lambda
-      // not allowing the event loop to drain before terminating execution.
-      Promise.all([logIncoming, logOutgoing]).then(function() {
-        joinpoint.proceed();
-      }).catch(function(errors) {
-        if(that.printErrors) {
-          console.error(errors);
-        }
-        // otherwise do nothing and continue with their code.
-      })
+      const responseBody = joinpoint.args[0];
+      handleSuccess(joinpoint, event, responseBody, logIncoming)
     })
 
     // send off any failures that used the context to respond
     meld.around(context, 'fail', function(joinpoint) {
-      Promise.all([logIncoming]).then(function() {
-        joinpoint.proceed();
-      }).catch(function(errors) {
-        if(that.printErrors)
-          console.error(errors);
-      })
+      handleFailure(joinpoint, logIncoming)
     })
+
+    if (callback) {
+      const newCallback = meld.around(callback, function(joinpoint) {
+        const error = joinpoint.args[0];
+        const responseBody = joinpoint.args[1];
+        if (error) {
+          handleFailure(joinpoint, logIncoming)
+          return
+        }
+        handleSuccess(joinpoint, event, responseBody, logIncoming)
+      })
+      return newCallback
+    }
+    return null
   }
 
   const setupAspectJoinpoint = function (joinpoint) {
+    const event = joinpoint.args[0];
+    const context = joinpoint.args[1];
+    let newCallback = null
     try {
-      const event = joinpoint.args[0];
-      const context = joinpoint.args[1];
+      const callback = joinpoint.args[2];
 
       // send off the input event
       const logIncoming = that.logIncoming(event, context);
 
       // setup our aspects
-      setupContextAspect(context, event, logIncoming);
+      newCallback = setupContextAspect(context, event, callback, logIncoming);
     } catch (ex) {
       if (that.printErrors) {
         console.error(ex);
       }
     }
-    joinpoint.proceed();
+    joinpoint.proceed(event, context, newCallback);
   };
 
 
