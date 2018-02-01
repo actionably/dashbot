@@ -31,8 +31,9 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
   };
 
   function dashbotDoResponse(response, responseCode){
-    that.logOutgoing(that.requestBody, response, that.outgoingMetadata)
+    that.logOutgoing(that.requestBody, response, that.outgoingMetadata, that.outgoingIntent)
     that.outgoingMetadata = null
+    that.outgoingIntent = null
     that.assistantHandle.originalDoResponse(response, responseCode);
   }
 
@@ -68,7 +69,11 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     that.outgoingMetadata = outgoingMetadata
   }
 
-  that.logIncoming = function(requestBody, metadata) {
+  that.setOutgoingIntent = function(outgoingIntent) {
+    that.outgoingIntent = outgoingIntent
+  }
+
+  that.logIncoming = function(requestBody, metadata, intent) {
     var timestamp = new Date().getTime();
     var data = {
       dashbot_timestamp: timestamp,
@@ -76,6 +81,9 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     };
     if (metadata) {
       data.metadata = metadata
+    }
+    if (intent) {
+      data.intent = intent
     }
     internalLogIncoming(data, 'npm');
   };

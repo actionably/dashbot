@@ -89,6 +89,8 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
         }
       }
       const logOutgoing = that.logOutgoing(event, responseBody);
+      that.outgoingIntent = null
+      that.outgoingMetadata = null
 
       // wait for everything to be sent off to dashbot before proceeding due to lambda
       // not allowing the event loop to drain before terminating execution.
