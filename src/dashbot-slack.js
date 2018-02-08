@@ -1,18 +1,13 @@
 'use strict'
 
 var _ = require('lodash');
-var makeRequest = require('./make-request')
+var makeRequest = require('./make-request');
+var DashBotBase = require('./dashbot-base');
 
 var VERSION = require('../package.json').version;
 
 function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
-  var that = this;
-  that.apiKey = apiKey;
-  that.platform = 'slack';
-  that.urlRoot = urlRoot;
-  that.debug = debug;
-  that.printErrors = printErrors;
-  that.config = config;
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'slack');
 
   function logIncomingInternal(data, source) {
     if (data.message.type === 'reconnect_url') {
@@ -121,6 +116,8 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
     logIncomingInternal(that._addTeamInfo(bot, message), 'botkit');
     next();
   };
+
+  return that;
 }
 
 module.exports = DashBotSlack;

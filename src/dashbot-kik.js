@@ -2,18 +2,14 @@
 
 var _ = require('lodash');
 var uuid = require('uuid')
-var makeRequest = require('./make-request')
+var makeRequest = require('./make-request');
+var DashBotBase = require('./dashbot-base');
 
 var VERSION = require('../package.json').version;
 
 function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
-  var that = this;
-  that.apiKey = apiKey;
-  that.platform = 'kik';
-  that.urlRoot = urlRoot;
-  that.debug = debug;
-  that.printErrors = printErrors;
-  that.config = config;
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'kik');
+
   that.botHandle = null;
   that.kikUsername = null;
   that.kikApiKey = null;
@@ -147,6 +143,8 @@ function DashBotKik(apiKey, urlRoot, debug, printErrors, config) {
     };
     return internalLogOutgoing(data, 'npm');
   };
+
+  return that;
 }
 
 module.exports = DashBotKik;

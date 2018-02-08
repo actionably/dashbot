@@ -2,18 +2,13 @@
 
 var _ = require('lodash');
 var makeRequest = require('./make-request');
+var DashBotBase = require('./dashbot-base');
 var meld = require('meld');
 
 var VERSION = require('../package.json').version;
 
 function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
-  var that = this;
-  that.apiKey = apiKey;
-  that.platform = 'alexa';
-  that.urlRoot = urlRoot;
-  that.debug = debug;
-  that.printErrors = printErrors;
-  that.config = config;
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'alexa');
 
   that.requestBody = null;
 
@@ -164,6 +159,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     return meld.around(handler, setupAspectJoinpoint);
   };
 
+  return that;
 }
 
 module.exports = DashBotAmazonAlexa;

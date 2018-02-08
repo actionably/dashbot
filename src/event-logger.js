@@ -3,17 +3,19 @@
 var makeRequest = require('./make-request');
 var VERSION = require('../package.json').version;
 
-function DashBotEventLogger(apiKey, urlRoot, debug, printErrors, config) {
+function DashBotEventLogger(apiKey, urlRoot, debug, printErrors, config, platform) {
   var that = this;
   that.apiKey = apiKey;
   that.debug = debug;
   that.urlRoot = urlRoot;
   that.printErrors = printErrors;
   that.config = config;
+  that.platform = platform;
 
-  that.logEvent = function(platform, data, source) {
+  that.logEvent = function(data) {
+    var source = 'npm';
     var url = that.urlRoot + '?apiKey=' +
-      that.apiKey + '&type=event&platform=' + platform + '&v=' + VERSION + '-' + source;
+      that.apiKey + '&type=event&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Event: ' + url);
       console.log(JSON.stringify(data, null, 2));

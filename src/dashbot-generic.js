@@ -1,21 +1,13 @@
 'use strict'
 
-var makeRequest = require('./make-request')
-var EventLogger = require('./event-logger')
-var DashBotEventUtil = require('./event-util')
+var makeRequest = require('./make-request');
+var DashBotBase = require('./dashbot-base');
 
 var VERSION = require('../package.json').version;
 
 function DashBotGeneric(platform, apiKey, urlRoot, debug, printErrors, config) {
-  var that = this;
-  that.apiKey = apiKey;
-  that.platform = platform;
-  that.urlRoot = urlRoot;
-  that.debug = debug;
-  that.printErrors = printErrors;
-  that.config = config;
-  that.eventLogger = new EventLogger(apiKey, urlRoot, debug, printErrors, config)
-  that.eventUtil = new DashBotEventUtil()
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, platform);
+
   that.messageUtil = {
     messageWithText: function(userId, text, conversationId) {
       // conversationId is optional
@@ -64,9 +56,7 @@ function DashBotGeneric(platform, apiKey, urlRoot, debug, printErrors, config) {
     return logOutgoingInternal(data, 'npm');
   };
 
-  that.logEvent = function(data) {
-    return that.eventLogger.logEvent(that.platform, data, 'npm');
-  }
+  return that;
 }
 
 module.exports = DashBotGeneric;
