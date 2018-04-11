@@ -42,6 +42,7 @@ module.exports = function(apiKey, config) {
     twitter: new DashBotGeneric('twitter', apiKey, urlRoot, debug, printErrors, config),
     line: new DashBotGeneric('line', apiKey, urlRoot, debug, printErrors, config),
     recast: new DashBotGeneric('recast', apiKey, urlRoot, debug, printErrors, config),
+    sms: new DashBotGeneric('sms', apiKey, urlRoot, debug, printErrors, config),
     skype: new DashBotGeneric('skype', apiKey, urlRoot, debug, printErrors, config),
     viber: new DashBotGeneric('viber', apiKey, urlRoot, debug, printErrors, config),
     wechat: new DashBotGeneric('wechat', apiKey, urlRoot, debug, printErrors, config)

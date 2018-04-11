@@ -17,6 +17,7 @@
     "google-dialog-flow": "nodemon -r dotenv/config examples/google-example-dialog-flow.js",
     "google-actions": "nodemon -r dotenv/config examples/google-example-actions-sdk.js",
     "alexa": "nodemon -r dotenv/config examples/alexa-webhook-example.js",
+    "sms": "nodemon -r dotenv/config examples/sms-example.js",
     "test": "mocha $(find src -name '*.js' | grep __tests__)"
   },
   "keywords": [
