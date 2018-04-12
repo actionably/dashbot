@@ -68,6 +68,10 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     that.outgoingIntent = outgoingIntent
   }
 
+  that.setNotHandled = function() {
+    that.outgoingIntent = 'NotHandled'
+  }
+
   that.logIncoming = function(requestBody, metadata, intent) {
     var timestamp = new Date().getTime();
     var data = {

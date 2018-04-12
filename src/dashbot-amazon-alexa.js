@@ -66,6 +66,10 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     that.outgoingIntent = intent
   }
 
+  that.setNotHandled = function() {
+    that.outgoingIntent = 'NotHandled'
+  }
+
   that.setOutgoingMetadata = function(metadata) {
     that.outgoingMetadata = metadata
   }
