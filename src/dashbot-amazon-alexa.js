@@ -67,7 +67,9 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   that.setNotHandled = function() {
-    that.outgoingIntent = 'NotHandled'
+    that.outgoingIntent = {
+      name: 'NotHandled'
+    }
   }
 
   that.setOutgoingMetadata = function(metadata) {
@@ -141,7 +143,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   const setupAspectJoinpoint = function (joinpoint) {
     const event = joinpoint.args[0];
     const context = joinpoint.args[1];
-    let newCallback = null
+    var newCallback = null
     try {
       const callback = joinpoint.args[2];
 

@@ -52,8 +52,35 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors, config) {
   };
 
   that.logOutgoing = function(data, responseBody) {
-    return logOutgoingInternal(data, responseBody, 'npm');
+    var dataToSend = data
+
+    if (that.outgoingIntent || that.outgoingMetadata) {
+      dataToSend = _.clone(data)
+      if (that.outgoingIntent) {
+        dataToSend.intent = that.outgoingIntent
+      }
+      if (that.outgoingMetadata) {
+        dataToSend.metadata = that.outgoingMetadata
+      }
+
+      that.outgoingIntent = null
+      that.outgoingMetadata = null
+    }
+
+    return logOutgoingInternal(dataToSend, responseBody, 'npm');
   };
+
+  /**
+   * this will set an internal variable that when the next outgoing message comes through it will set the intent of it
+   * to NotHandled
+   *
+   * @returns {*}
+   */
+  that.setNotHandled = function() {
+    that.outgoingIntent = {
+      name: 'NotHandled'
+    }
+  }
 
   function getAndRemove(obj, prop) {
     var temp = obj[prop];

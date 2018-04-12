@@ -1,5 +1,6 @@
 'use strict'
 
+var _ = require('lodash')
 var makeRequest = require('./make-request');
 var DashBotBase = require('./dashbot-base');
 
@@ -48,12 +49,33 @@ function DashBotGeneric(platform, apiKey, urlRoot, debug, printErrors, config) {
     }, that.printErrors, that.config.redact);
   };
 
+  that.setNotHandled = function() {
+    that.outgoingIntent = {
+      name: 'NotHandled'
+    }
+  }
+
   that.logIncoming = function(data) {
     return logIncomingInternal(data, 'npm', 'incoming');
   };
 
   that.logOutgoing = function(data) {
-    return logOutgoingInternal(data, 'npm');
+    var responseBodyToSend = data
+
+    if (that.outgoingIntent || that.outgoingMetadata) {
+      responseBodyToSend = _.clone(data)
+      if (that.outgoingIntent) {
+        responseBodyToSend.intent = that.outgoingIntent
+      }
+      if (that.outgoingMetadata) {
+        responseBodyToSend.metadata = that.outgoingMetadata
+      }
+
+      that.outgoingIntent = null
+      that.outgoingMetadata = null
+    }
+
+    return logOutgoingInternal(responseBodyToSend, 'npm');
   };
 
   return that;

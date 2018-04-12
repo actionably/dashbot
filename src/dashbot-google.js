@@ -69,7 +69,9 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   that.setNotHandled = function() {
-    that.outgoingIntent = 'NotHandled'
+    that.outgoingIntent = {
+      name: 'NotHandled'
+    }
   }
 
   that.logIncoming = function(requestBody, metadata, intent) {
