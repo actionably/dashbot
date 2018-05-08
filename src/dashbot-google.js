@@ -18,18 +18,34 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     }
     that.assistantHandle = assistant;
 
-    that.assistantHandle.originalDoResponse = assistant.doResponse_;
-    that.assistantHandle.doResponse_ = dashbotDoResponse;
+    if (typeof assistant.doResponse_ !== 'undefined') {
+      that.assistantHandle.originalDoResponse = assistant.doResponse_;
+      that.assistantHandle.doResponse_ = dashbotDoResponse;
 
-    that.requestBody = assistant.body_;
-    that.logIncoming(assistant.body_, incomingMetadata);
+      that.requestBody = assistant.body_;
+      that.logIncoming(assistant.body_, incomingMetadata);
+    } else {
+      that.assistantHandle.originalhandler = assistant.handler.bind(assistant);
+      that.assistantHandle.handler = dashbotDoResponseV2;
+      that.incomingMetadata = incomingMetadata
+    }
   };
 
-  function dashbotDoResponse(response, responseCode){
+  function dashbotDoResponse(response, responseCode) {
     that.logOutgoing(that.requestBody, response, that.outgoingMetadata, that.outgoingIntent)
     that.outgoingMetadata = null
     that.outgoingIntent = null
     that.assistantHandle.originalDoResponse(response, responseCode);
+  }
+
+  function dashbotDoResponseV2(body, headers) {
+    that.logIncoming(body, that.incomingMetadata);
+    return that.assistantHandle.originalhandler(body, headers).then(function(response){
+      that.logOutgoing(body, response.body, that.outgoingMetadata, that.outgoingIntent)
+      that.outgoingMetadata = null
+      that.outgoingIntent = null
+      return response
+    })
   }
 
   function internalLogIncoming(data, source) {
@@ -39,7 +55,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -53,7 +69,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
