@@ -18,18 +18,30 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     }
     that.assistantHandle = assistant;
 
-    if (typeof assistant.doResponse_ !== 'undefined') {
+  if (typeof assistant.doResponse_ !== 'undefined') {
       that.assistantHandle.originalDoResponse = assistant.doResponse_;
       that.assistantHandle.doResponse_ = dashbotDoResponse;
-
       that.requestBody = assistant.body_;
       that.logIncoming(assistant.body_, incomingMetadata);
-    } else {
+    } else if (typeof assistant.handleRequest !== 'undefined') {
+      // dialogflow-fulfillment npm
+      that.assistantHandle.client.orginalSend = assistant.client.sendJson_;
+      that.assistantHandle.client.sendJson_ = dashbotSend;
+      that.requestBody = assistant.request_.body;
+      that.logIncoming(assistant.request_.body, incomingMetadata);
+  } else {
       that.assistantHandle.originalhandler = assistant.handler.bind(assistant);
       that.assistantHandle.handler = dashbotDoResponseV2;
       that.incomingMetadata = incomingMetadata
     }
   };
+
+  function dashbotSend(responseJson) {
+    that.logOutgoing(that.requestBody, responseJson, that.outgoingMetadata, that.outgoingIntent)
+    that.outgoingMetadata = null
+    that.outgoingIntent = null
+    that.assistantHandle.client.orginalSend(responseJson)
+  }
 
   function dashbotDoResponse(response, responseCode) {
     that.logOutgoing(that.requestBody, response, that.outgoingMetadata, that.outgoingIntent)
