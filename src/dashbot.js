@@ -9,6 +9,7 @@ var DashBotMicrosoft = require('./dashbot-microsoft')
 var DashBotGoogle = require('./dashbot-google')
 var DashBotAmazonAlexa = require('./dashbot-amazon-alexa')
 var DashBotGeneric = require('./dashbot-generic')
+var DashBotLine = require('./dashbot-line')
 
 
 module.exports = function(apiKey, config) {
@@ -38,9 +39,9 @@ module.exports = function(apiKey, config) {
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors, config),
     google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors, config),
     alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config),
+    line: new DashBotLine(apiKey, urlRoot, debug, printErrors, config),
     generic: new DashBotGeneric('generic', apiKey, urlRoot, debug, printErrors, config),
     twitter: new DashBotGeneric('twitter', apiKey, urlRoot, debug, printErrors, config),
-    line: new DashBotGeneric('line', apiKey, urlRoot, debug, printErrors, config),
     recast: new DashBotGeneric('recast', apiKey, urlRoot, debug, printErrors, config),
     sms: new DashBotGeneric('sms', apiKey, urlRoot, debug, printErrors, config),
     skype: new DashBotGeneric('skype', apiKey, urlRoot, debug, printErrors, config),
