@@ -631,6 +631,30 @@ const REDACTED_GENERIC = {
   userId: '1111111111111111'
 }
 
+const LINE_IN = {
+  type: 'message',
+  source: {
+    type: 'user',
+    userId: 'U6qwr653uya19w874238'
+  },
+  message: {
+    type: 'text',
+    text: '1111111111111111'
+  }
+}
+
+const REDACTED_LINE_IN = {
+  type: 'message',
+  source: {
+    type: 'user',
+    userId: 'U6qwr653uya19w874238'
+  },
+  message: {
+    type: 'text',
+    text: 'CREDIT_CARD_NUMBER'
+  }
+}
+
 const redactor = require('../redactor')
 
 describe('Redactor', function() {
@@ -650,6 +674,10 @@ describe('Redactor', function() {
     it('should remove credit card from generic in', function() {
       const redacted = redactor.redact(GENERIC)
       assertObject.equal(redacted, REDACTED_GENERIC)
+    })
+    it('should remove credit card from line in', function() {
+      const redacted = redactor.redact(LINE_IN)
+      assertObject.equal(redacted, REDACTED_LINE_IN)
     })
   })
 })

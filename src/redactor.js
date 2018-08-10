@@ -15,8 +15,10 @@ const PATH_DESCRIPTIONS = [
   ['entry', '*', 'messaging', '*', 'message', 'text'],
 
   // generic
-  ['text']
+  ['text'],
 
+  // line
+  ['message', 'text']
 ]
 
 const redactor = {
