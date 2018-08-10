@@ -26,18 +26,18 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
       if (event.message.type === 'text') {
         data.text = event.message.text
       } else if (event.message.type === 'file') {
-        data.text = `<${event.message.type}: ${event.message.fileName}>`
+        data.text = `[${event.message.type}: ${event.message.fileName}]`
       } else if (event.message.type === 'location') {
-        data.text = `<${event.message.type}: ${event.message.address} [${event.message.latitude}, ${event.message.longitude}]>`
+        data.text = `[${event.message.type}: ${event.message.address} (${event.message.latitude}, ${event.message.longitude})]`
       } else if (event.message.type === 'sticker') {
-        data.text = `<${event.message.type}: ${event.message.stickerId}>`
+        data.text = `[${event.message.type}: ${event.message.stickerId}]`
       } else {
-        data.text = `<${event.message.type}>`
+        data.text = `[${event.message.type}]`
       }
     } else if (event.type === 'postback') {
-      data.text = `<${event.type}: ${event.postback.data}>`
+      data.text = `[${event.type}: ${event.postback.data}]`
     } else {
-      data.text = `<${event.type}>`
+      data.text = `[${event.type}]`
     }
     return {
       userId: getSourceId(event.source),
@@ -51,20 +51,20 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
     if (event.type === 'text') {
       data.text = event.text
     } else if (event.type === 'sticker') {
-      data.text = `<${event.type}: ${event.stickerId}>`
+      data.text = `[${event.type}: ${event.stickerId}]`
     } else if (event.type === 'image' || event.type === 'video' || event.type === 'audio') {
       data.images = [{ image: { url: event.originalContentUrl } }]
-      data.text = `<${event.type}: ${event.originalContentUrl}>`
+      data.text = `[${event.type}: ${event.originalContentUrl}]`
     } else if (event.type === 'location') {
-      data.text = `<${event.type}: ${event.address} [${event.latitude}, ${event.longitude}]>`
+      data.text = `[${event.type}: ${event.address} (${event.latitude}, ${event.longitude})]`
     } else if (event.type === 'imagemap') {
-      data.text = `<${event.type} (${event.baseUrl}): ${event.altText}>`
+      data.text = `[${event.type} (${event.baseUrl}): ${event.altText}]`
     } else if (event.type === 'template') {
-      data.text = `<${event.type} (${event.template.type}): ${event.altText}>`
+      data.text = `[${event.type} (${event.template.type}): ${event.altText}]`
     } else if (event.type === 'flex') {
-      data.text = `<${event.type} (${event.contents.type}): ${event.altText}>`
+      data.text = `[${event.type} (${event.contents.type}): ${event.altText}]`
     } else {
-      data.text = `<${event.type}>`
+      data.text = `[${event.type}]`
     }
     return {
       userId: getSourceId(source),
