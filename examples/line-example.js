@@ -25,8 +25,8 @@ const client = new line.Client(config);
 
 app.use('/webhook', line.middleware(config), (req, res) => {
   req.body.events.map(event => {
+    dashbot.logIncoming(event);
     if (event.type === 'message' && event.message.type === 'text') {
-      dashbot.logIncoming(event);
       var reply = {
         type: 'text',
         text: event.message.text
