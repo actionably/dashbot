@@ -7,7 +7,7 @@ var DashBotBase = require('./dashbot-base');
 var VERSION = require('../package.json').version;
 
 function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
-  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'line');
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'generic');
 
   function getSourceId(source) {
     switch(source.type) {
@@ -21,7 +21,7 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   function incomingDataBuilder(event) {
-    data = {}
+    var data = {}
     if (event.type === 'message') {
       if (event.message.type === 'text') {
         data.text = event.message.text
@@ -47,7 +47,7 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   function outgoingDataBuilder(source, event) {
-    data = {}
+    var data = {}
     if (event.type === 'text') {
       data.text = event.text
     } else if (event.type === 'sticker') {
