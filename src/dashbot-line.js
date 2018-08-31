@@ -39,11 +39,9 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
     } else {
       data.text = `[${event.type}]`
     }
-    return {
-      userId: getSourceId(event.source),
-      platformJson: event,
-      ...data
-    }
+    data.userId = getSourceId(event.source)
+    data.platformJson = event
+    return data
   }
 
   function outgoingDataBuilder(source, event) {
@@ -66,11 +64,9 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
     } else {
       data.text = `[${event.type}]`
     }
-    return {
-      userId: getSourceId(source),
-      platformJson: event,
-      ...data
-    }
+    data.userId = getSourceId(source)
+    data.platformJson = event
+    return data
   }
 
   function logIncomingInternal(data) {
