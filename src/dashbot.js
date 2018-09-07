@@ -5,6 +5,7 @@ require('es6-promise').polyfill()
 var DashBotFacebook = require('./dashbot-facebook')
 var DashBotSlack = require('./dashbot-slack')
 var DashBotKik = require('./dashbot-kik')
+var DashBotMicrosoftDeprecated = require('./dashbot-microsoft-deprecated')
 var DashBotMicrosoft = require('./dashbot-microsoft')
 var DashBotGoogle = require('./dashbot-google')
 var DashBotAmazonAlexa = require('./dashbot-amazon-alexa')
@@ -36,6 +37,7 @@ module.exports = function(apiKey, config) {
     facebook: new DashBotFacebook(apiKey, urlRoot, debug, printErrors, config),
     slack: new DashBotSlack(apiKey, urlRoot, debug, printErrors, config),
     kik: new DashBotKik(apiKey, urlRoot, debug, printErrors, config),
+    microsoftDeprecated: new DashBotMicrosoftDeprecated(apiKey, urlRoot, debug, printErrors, config),
     microsoft: new DashBotMicrosoft(apiKey, urlRoot, debug, printErrors, config),
     google: new DashBotGoogle(apiKey, urlRoot, debug, printErrors, config),
     alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config),

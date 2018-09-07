@@ -1,79 +1,95 @@
 'use strict'
 
-var _ = require('lodash');
-var makeRequest = require('./make-request')
+var _ = require('lodash')
+var makeRequest = require('./make-request');
+var DashBotBase = require('./dashbot-base');
 
 var VERSION = require('../package.json').version;
 
-function DashBotMicrosoft(apiKeyMap, urlRoot, debug, printErrors, config) {
-  var that = this;
-  that.apiKeyMap = apiKeyMap;
-  that.urlRoot = urlRoot;
-  that.debug = debug;
-  that.printErrors = printErrors;
-  that.facebookToken = null;
-  that.config = config;
+function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
+  var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'microsoft');
 
-  // facebook token hack
-  that.setFacebookToken = function(token){
-    that.facebookToken = token;
-  }
-
-  // middleware endpoints
-  that.receive = function(session, next) {
-    logDashbot(session, true, next);
-  };
-  that.send = function(session, next) {
-    logDashbot(session, false, next);
-  };
-
-  function logDashbot (session, isIncoming, next) {
-    if (that.debug) {
-      //console.log('\n*** MSFTBK Debug: ', (isIncoming ? 'incoming' : 'outgoing'), JSON.stringify(session, null, 2))
-    }
-
-    var data = {
-      is_microsoft:true,
-      dashbot_timestamp: new Date().getTime(),
-      json: session
-    };
-    var platform = session.source ? session.source : _.get(session, 'address.channelId');
-
-    // hack for facebook token
-    if(platform === 'facebook' && that.facebookToken != null){
-      data.token = that.facebookToken;
-    }
-
-    var apiKey = apiKeyMap[platform]
-    if (!apiKey) {
-      console.warn('**** Warning: No Dashbot apiKey for platform:(' + platform + ') Data not saved. ')
-      next();
-      return;
-    }
-
-    // if the platform is not supported by us, use generic
-    if (_.indexOf(['facebook', 'kik', 'slack'], platform) === -1) {
-      platform = 'generic';
-    }
-
+  function logIncomingInternal(data, source) {
+    const type = 'incoming';
     var url = that.urlRoot + '?apiKey=' +
-      apiKey + '&type=' + (isIncoming ? 'incoming' : 'outgoing') +
-      '&platform=' + platform + '&v=' + VERSION + '-npm';
+      that.apiKey + '&type=' + type + '&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
-      console.log('\n*** Dashbot MSFT Bot Framework Debug **');
-      console.log(' *** platform is ' + platform);
-      console.log(' *** Dashbot Url: ' + url);
+      console.log('Dashbot Incoming: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    makeRequest({
+    return makeRequest({
       uri: url,
       method: 'POST',
       json: data
     }, that.printErrors, that.config.redact);
+  };
 
-    next();
+  function logOutgoingInternal(data, source) {
+    var url = that.urlRoot + '?apiKey=' +
+      that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
+    if (that.debug) {
+      console.log('Dashbot Outgoing: ' + url);
+      console.log(JSON.stringify(data, null, 2));
+    }
+    return makeRequest({
+      uri: url,
+      method: 'POST',
+      json: data
+    }, that.printErrors, that.config.redact);
+  };
+
+  that.logIncoming = function(data) {
+    return logIncomingInternal(data, 'npm');
+  };
+
+  that.setOutgoingIntent = function(intent) {
+    that.outgoingIntent = intent
   }
 
+  that.setNotHandled = function() {
+    that.outgoingIntent = {
+      name: 'NotHandled'
+    }
+  }
+
+  that.setOutgoingMetadata = function(metadata) {
+    that.outgoingMetadata = metadata
+  }
+
+  that.logOutgoing = function(data) {
+    var responseBodyToSend = data
+
+    if (that.outgoingIntent || that.outgoingMetadata) {
+      responseBodyToSend = _.clone(data)
+      if (that.outgoingIntent) {
+        responseBodyToSend.intent = that.outgoingIntent
+      }
+      if (that.outgoingMetadata) {
+        responseBodyToSend.metadata = that.outgoingMetadata
+      }
+
+      that.outgoingIntent = null
+      that.outgoingMetadata = null
+    }
+
+    return logOutgoingInternal(responseBodyToSend, 'npm');
+  };
+
+  that.middleware = async (context, next) => {
+    if (context.activity) {
+      that.logIncoming(context.activity)
+    }
+    context.onSendActivities(async (context, activities, innerNext) => {
+      const res = await innerNext()
+      _.each(activities, activity => {
+        that.logOutgoing(activity);
+      });
+      return res
+    });
+    await next()
+  }
+
+  return that;
 }
 
-module.exports = DashBotMicrosoft;
+module.exports = DasbbotMicrosoft;
