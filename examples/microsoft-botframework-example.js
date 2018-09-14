@@ -21,7 +21,7 @@ const adapter = new BotFrameworkAdapter({
 const dashbot = require('../src/dashbot')(process.env.DASHBOT_API_KEY_MICROSOFT,
   {debug:true, urlRoot: process.env.DASHBOT_URL_ROOT}).microsoft
 // add dashbot middleware
-adapter.use(dashbot.middleware)
+adapter.use(dashbot.middleware())
 
 
 // Add conversation state middleware

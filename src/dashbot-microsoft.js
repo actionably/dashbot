@@ -75,9 +75,14 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
     return logOutgoingInternal(responseBodyToSend, 'npm');
   };
 
-  that.middleware = (context, next) => {
+  that.middleware = (luisModel) => (context, next) => {
     if (context.activity) {
-      that.logIncoming(context.activity)
+      let activity = context.activity
+      if (luisModel) {
+        activity = _.clone(activity)
+        activity.luisResults = luisModel.get(context)
+      }
+      that.logIncoming(activity)
     }
     context.onSendActivities((context, activities, innerNext) => {
       return innerNext().then((res) => {
