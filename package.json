@@ -9,7 +9,8 @@
   },
   "scripts": {
     "facebook": "nodemon -r dotenv/config examples/facebook-example.js",
-    "generic": "nodemon -r dotenv/config examples/generic-example.js",
+    "universal": "nodemon -r dotenv/config examples/universal-example.js",
+    "webchat": "nodemon -r dotenv/config examples/webchat-example.js",
     "kik": "nodemon -r dotenv/config examples/kik-example-npm.js",
     "slack": "nodemon -r dotenv/config examples/slack-example.js",
     "microsoft": "nodemon -r dotenv/config examples/microsoft-botframework-example.js",

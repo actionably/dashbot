@@ -43,6 +43,8 @@ module.exports = function(apiKey, config) {
     alexa: new DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config),
     line: new DashBotLine(apiKey, urlRoot, debug, printErrors, config),
     generic: new DashBotGeneric('generic', apiKey, urlRoot, debug, printErrors, config),
+    universal: new DashBotGeneric('universal', apiKey, urlRoot, debug, printErrors, config),
+    webchat: new DashBotGeneric('webchat', apiKey, urlRoot, debug, printErrors, config),
     twitter: new DashBotGeneric('twitter', apiKey, urlRoot, debug, printErrors, config),
     recast: new DashBotGeneric('recast', apiKey, urlRoot, debug, printErrors, config),
     sms: new DashBotGeneric('sms', apiKey, urlRoot, debug, printErrors, config),
