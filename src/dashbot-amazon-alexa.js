@@ -53,11 +53,29 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
 
   that.logOutgoing = function(event, response, context) {
     var timestamp = new Date().getTime();
+    // get session attributes
+    var eventAttributes = event && event.session && event.session.attributes || {};
+    var responseAttributes = response && response.sessionAttributes || {};
+    // clone event and response
+    var trimmedEvent = _.cloneDeep(event);
+    var trimmedResponse = _.cloneDeep(response);
+    // remove extra attribute values from event
+    for (var eventKey in eventAttributes) {
+      if (eventAttributes.hasOwnProperty(eventKey) && eventKey !== 'STATE') {
+        delete trimmedEvent.session.attributes[eventKey];
+      }
+    }
+    // remove extra attribute values from response
+    for (var responseKey in responseAttributes) {
+      if (responseAttributes.hasOwnProperty(responseKey) && responseKey !== 'STATE') {
+        delete trimmedResponse.sessionAttributes[responseKey];
+      }
+    }
     var data = {
       dashbot_timestamp: timestamp,
-      event: event,
+      event: trimmedEvent,
       context: context,
-      response: response
+      response: trimmedResponse
     };
     return internalLogOutgoing(data, 'npm');
   };
