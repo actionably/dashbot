@@ -69,7 +69,7 @@ function DashbotMicrosoftDeprecated(apiKeyMap, urlRoot, debug, printErrors, conf
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
 
     next();
   }

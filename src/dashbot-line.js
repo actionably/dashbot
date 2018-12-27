@@ -80,7 +80,7 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: incomingDataBuilder(data)
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
   function logOutgoingInternal(source, data) {
@@ -94,7 +94,7 @@ function DashBotLine(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: outgoingDataBuilder(source, data)
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
   that.setNotHandled = function() {

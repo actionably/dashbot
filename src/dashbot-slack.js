@@ -24,7 +24,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   }
 
   function logOutgoingInternal(data, source) {
@@ -39,7 +39,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   }
 
   that._addTeamInfo = function addTeamInfo(bot, message) {
@@ -94,7 +94,7 @@ function DashBotSlack(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
   that.logIncoming = function(bot, team, message) {

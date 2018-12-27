@@ -21,7 +21,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
   function logOutgoingInternal(data, responseBody, source) {
@@ -37,7 +37,7 @@ function DashBotFacebook(apiKey, urlRoot, debug, printErrors, config) {
       uri: url,
       method: 'POST',
       json: data
-    }, that.printErrors, that.config.redact);
+    }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
   /*
