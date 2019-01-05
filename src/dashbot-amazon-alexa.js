@@ -46,7 +46,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     var data = {
       dashbot_timestamp: timestamp,
       event: event,
-      context: context
+      context: cleanContext(context)
     };
     return internalLogIncoming(data, 'npm');
   };
@@ -56,7 +56,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     var data = {
       dashbot_timestamp: timestamp,
       event: event,
-      context: context,
+      context: cleanContext(context),
       response: response
     };
     return internalLogOutgoing(data, 'npm');
@@ -166,6 +166,35 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   };
 
   return that;
+}
+
+// remove circular properties from LambdaContext
+// as defined by bespoken-tools
+const contextBlackList = {
+  'BST.LambdaServer': [
+    'response',
+    'body',
+    'request',
+    'verbose',
+  ]
+}
+
+const cleanContext = function(context) {
+  if (_.isObjectLike(context)) {
+    const client = _.get(context, 'functionName');
+
+    // check client
+    if (client &&
+      _.get(context, 'invokedFunctionArn') === 'N/A' &&
+      _.get(context, 'memoryLimitInMB') === -1) {
+      const clone = _.cloneDeep(context)
+      for (const i in contextBlackList[client]) {
+        delete clone[contextBlackList[client][i]]
+      }
+      return clone
+    }
+  }
+  return context
 }
 
 module.exports = DashBotAmazonAlexa;
