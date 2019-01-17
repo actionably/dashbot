@@ -17,7 +17,6 @@ function ask(question) {
   const messageForDashbot = {
     "text": question,
     "userId": "USERIDHERE123123",
-    "conversationId": "GROUPCHATID234",
     "platformJson": {
       "whateverJson": "any JSON specific to your platform can be stored here"
     }
@@ -28,7 +27,6 @@ function ask(question) {
     const messageForDashbot = {
       "text": answer,
       "userId": "USERIDHERE123123",
-      "conversationId": "GROUPCHATID234",
       "platformJson": {
         "whateverJson": "any JSON specific to your platform can be stored here"
       }
