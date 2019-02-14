@@ -4,12 +4,14 @@ var _ = require('lodash');
 var makeRequest = require('./make-request');
 var DashBotBase = require('./dashbot-base');
 var meld = require('meld');
+var DashbotLogger = require('dashbot-logger');
 
 var VERSION = require('../package.json').version;
 
 function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'alexa');
 
+  that.dashbotLogger = null;
   that.requestBody = null;
 
   function internalLogIncoming(data, source) {
@@ -48,6 +50,9 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
       event: event,
       context: cleanContext(context)
     };
+    if (!!that.dashbotLogger) {
+      return that.dashbotLogger.log({'incoming': { event, context }})
+    }
     return internalLogIncoming(data, 'npm');
   };
 
@@ -59,6 +64,9 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
       context: cleanContext(context),
       response: response
     };
+    if (!!that.dashbotLogger) {
+      return that.dashbotLogger.log({'outgoing': { event, response, context }})
+    }
     return internalLogOutgoing(data, 'npm');
   };
 
@@ -165,8 +173,19 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     return meld.around(handler, setupAspectJoinpoint);
   };
 
+  that.logIntegration = function(config) {
+    config.debug = _.has(config, 'debug') ? config.debug : that.debug;
+    config.printErrors = _.has(config, 'printErrors') ? config.printErrors : that.printErrors;
+
+    that.logIntegrationEnabled = true;
+    that.dashbotLogger = new DashbotLogger(config);
+
+    return that
+  }
+
   return that;
 }
+
 
 // remove circular properties from LambdaContext
 // as defined by bespoken-tools
