@@ -27,9 +27,9 @@ module.exports = function (data, printErrors, redact, timeout = 15000) {
       }
       return response
     })
-  } else {
-    p.catch(function(err) {
-      // ignore
-    });
   }
+
+  return p.catch(function(err) {
+    // ignore
+  })
 }
