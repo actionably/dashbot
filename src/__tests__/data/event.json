@@ -1,0 +1,44 @@
+{
+  "context": {
+    "System": {
+      "apiEndpoint": "https://test.com",
+      "application": {
+        "applicationId": "applicationId"
+      },
+      "user": {
+        "userId": "1"
+      },
+      "device": {
+        "deviceId": "1"
+      },
+      "apiAccessToken": "accessToken"
+    }
+  },
+  "request": {
+    "type": "IntentRequest",
+    "locale": "en-US",
+    "intent": {
+      "name": "HandleAnswer",
+      "confirmationStatus": "confirmationStatus",
+      "slots": {
+        "answer": {
+          "name": "name",
+          "confirmationStatus": "confirmationStatus"
+        }
+      }
+    },
+    "requestId": "requestId",
+    "timestamp": "2019-02-19T23:25:50Z"
+  },
+  "version": "1.0",
+  "session": {
+    "new": false,
+    "sessionId": "sessionId",
+    "application": {
+      "applicationId": "applicationId"
+    },
+    "user": {
+      "userId": "1"
+    }
+  }
+}
