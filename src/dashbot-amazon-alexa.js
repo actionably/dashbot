@@ -177,7 +177,6 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     config.debug = _.has(config, 'debug') ? config.debug : that.debug;
     config.printErrors = _.has(config, 'printErrors') ? config.printErrors : that.printErrors;
 
-    that.logIntegrationEnabled = true;
     that.dashbotLogger = new DashbotLogger(config);
 
     return that
