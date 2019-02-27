@@ -1,15 +1,17 @@
 'use strict'
 
 var _ = require('lodash');
-var makeRequest = require('./make-request');
-var DashBotBase = require('./dashbot-base');
 var meld = require('meld');
+
+var DashBotBase = require('./dashbot-base');
 var DashbotLogger = require('dashbot-logger');
 
 var VERSION = require('../package.json').version;
 
 function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   var that = new DashBotBase(apiKey, urlRoot, debug, printErrors, config, 'alexa');
+
+  that.makeRequest = meld.around(require('./make-request'), require('./ignore-users')(config.ignoreUserIds, 'event.session.user.userId'));
 
   that.dashbotLogger = null;
   that.requestBody = null;
@@ -22,7 +24,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
       console.log(JSON.stringify(data, null, 2));
     }
 
-    return makeRequest({
+    return that.makeRequest({
       uri: url,
       method: 'POST',
       json: data
@@ -36,7 +38,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
       console.log('Dashbot Outgoing: ' + url);
       console.log(JSON.stringify(data, null, 2));
     }
-    return makeRequest({
+    return that.makeRequest({
       uri: url,
       method: 'POST',
       json: data
