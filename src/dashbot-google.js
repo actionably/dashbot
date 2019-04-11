@@ -114,7 +114,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     if (intent) {
       data.intent = intent
     }
-    internalLogIncoming(data, 'npm');
+    return internalLogIncoming(data, 'npm');
   };
 
   that.logOutgoing = function(requestBody, message, metadata) {
@@ -127,7 +127,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     if (metadata) {
       data.metadata = metadata
     }
-    internalLogOutgoing(data, 'npm');
+    return internalLogOutgoing(data, 'npm');
   };
 
   return that;
