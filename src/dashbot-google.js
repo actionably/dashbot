@@ -127,6 +127,9 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     if (metadata) {
       data.metadata = metadata
     }
+    if (that.outgoingIntent) {
+      data.intent = that.outgoingIntent;
+    }
     internalLogOutgoing(data, 'npm');
   };
 
