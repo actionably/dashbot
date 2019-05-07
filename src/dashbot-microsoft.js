@@ -76,6 +76,14 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
   };
 
   that.middleware = (luisModel) => (context, next) => {
+
+    // Make dashbot available in the context object
+    if (context.turnState.get(Symbol.for('dashbot')) && that.printErrors) {
+      console.warn('Key collision on context turnState. The key Symbol(dashbot) already exists - overwriting.');
+    }
+    context.turnState.set(Symbol.for('dashbot'), that);
+
+
     if (context.activity) {
       let activity = context.activity
       if (luisModel) {
