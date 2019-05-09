@@ -38,23 +38,53 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
     }, that.printErrors, that.config.redact, that.config.timeout);
   };
 
+  function interceptActivity(incomingActivity, outgoingActivity, intercepted) {
+    const type = _.get(outgoingActivity, 'type')
+
+    if (type !== "trace") {
+      // do not want to log same incoming activity multiple times
+      if (!intercepted) {
+        that.logIncoming(incomingActivity)
+        that.logOutgoing(outgoingActivity)
+        return true
+      } else {
+        that.logOutgoing(outgoingActivity)
+        return false
+      }
+    } else if (type === "trace") {
+      let outgoing = _.clone(outgoingActivity)
+      let incoming = _.clone(incomingActivity)
+
+      // switch from and recipient fields because luis results
+      // are from bot to user although it's tracking the users
+      // intent
+      let activity = _.assign(outgoing, incoming);
+      activity.luisResults = _.get(activity, 'value.recognizerResult');
+
+      that.logIncoming(activity)
+      return true
+    }
+
+    return false
+  };
+
   that.logIncoming = function(data) {
     return logIncomingInternal(data, 'npm');
   };
 
   that.setOutgoingIntent = function(intent) {
     that.outgoingIntent = intent
-  }
+  };
 
   that.setNotHandled = function() {
     that.outgoingIntent = {
       name: 'NotHandled'
     }
-  }
+  };
 
   that.setOutgoingMetadata = function(metadata) {
     that.outgoingMetadata = metadata
-  }
+  };
 
   that.logOutgoing = function(data) {
     var responseBodyToSend = data
@@ -76,6 +106,13 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
   };
 
   that.middleware = (luisModel) => (context, next) => {
+    if (luisModel) {
+      console.log('Use of luis model parameter in middleware is deprecated.' )
+      console.log('Luis model results are now captured automatically by middleware.')
+    }
+
+    let intercepted = false;
+    let incomingActivity;
 
     // Make dashbot available in the context object
     if (context.turnState.get(Symbol.for('dashbot')) && that.printErrors) {
@@ -83,25 +120,29 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
     }
     context.turnState.set(Symbol.for('dashbot'), that);
 
-
     if (context.activity) {
-      let activity = context.activity
-      if (luisModel) {
-        activity = _.clone(activity)
-        activity.luisResults = luisModel.get(context)
-      }
-      that.logIncoming(activity)
+      incomingActivity = context.activity
     }
+
     context.onSendActivities((context, activities, innerNext) => {
       return innerNext().then((res) => {
-        _.each(activities, activity => {
-          that.logOutgoing(activity);
+        _.each(activities, outgoingActivity => {
+          intercepted = intercepted || interceptActivity(incomingActivity, outgoingActivity, intercepted)
         });
         return res
       })
     });
-    return next()
-  }
+
+    return next().then((res) => {
+      if (!intercepted && incomingActivity) {
+        that.logIncoming(incomingActivity)
+      }
+      return res
+    }, (rej) => {
+      console.error(rej);
+      return rej
+    })
+  };
 
   return that;
 }
