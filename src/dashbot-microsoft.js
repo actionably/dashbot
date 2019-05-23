@@ -127,7 +127,7 @@ function DasbbotMicrosoft(apiKey, urlRoot, debug, printErrors, config) {
     context.onSendActivities((context, activities, innerNext) => {
       return innerNext().then((res) => {
         _.each(activities, outgoingActivity => {
-          intercepted = intercepted || interceptActivity(incomingActivity, outgoingActivity, intercepted)
+          intercepted = interceptActivity(incomingActivity, outgoingActivity, intercepted) || intercepted
         });
         return res
       })
