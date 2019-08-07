@@ -13,13 +13,13 @@ module.exports = function (userList, path) {
     }
 
     if(!list || list.length === 0) {
-      methodCall.proceed()
+      return methodCall.proceed()
     }
     const userId = _.get(methodCall, `args.0.json.${path}`)
     if(userId && _.find(list, function(item) { return item === userId })) {
       return
     }
 
-    methodCall.proceed()
+    return methodCall.proceed()
   }
 }
