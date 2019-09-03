@@ -30,6 +30,7 @@ describe('makeRequest()', function() {
 
     p.then(function (res) {
       assert.equal(res.status, 200)
+      server.close()
     }, function(e) {
       throw new Error(e)
     }).then(done, done)
@@ -64,6 +65,7 @@ describe('makeRequest()', function() {
       throw new Error(res.status)
     }, function(e) {
       assert.ok(e.message.includes('timeout'))
+      server.close()
     }).then(done, done)
   });
 
