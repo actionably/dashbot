@@ -1,0 +1,52 @@
+{
+	"event": {
+		"context": {
+			"System": {
+				"apiEndpoint": "https://api.amazonalexa.com",
+				"application": {
+					"applicationId": "amzn1.ask.skill.foo"
+				},
+				"user": {
+					"userId": "amzn1.ask.account.bar"
+				},
+				"device": {
+					"deviceId": "amzn1.ask.device.device"
+				},
+				"apiAccessToken": "token"
+			}
+		},
+		"request": {
+			"dialogState": "IN_PROGRESS",
+			"type": "IntentRequest",
+			"locale": "en-US",
+			"intent": {
+				"name": "FindZipcode",
+				"confirmationStatus": "NONE",
+				"slots": {
+					"zipcode": {
+						"name": "Zipcode",
+						"source": "USER",
+						"value": "ZIPCODE",
+						"confirmationStatus": "NONE"
+					}
+				}
+			},
+			"requestId": "amzn1.echo-api.request.request",
+			"timestamp": "2019-10-10T10:10:10Z"
+		},
+		"version": "1.0",
+		"session": {
+			"new": false,
+			"sessionId": "amzn1.echo-api.session.session",
+			"application": {
+				"applicationId": "amzn1.ask.skill.application"
+			},
+			"attributes" : {
+				"zipcode": "ZIPCODE"
+			},
+			"user": {
+				"userId": "amzn1.ask.account.user"
+			}
+		}
+	}
+}

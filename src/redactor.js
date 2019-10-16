@@ -1,5 +1,6 @@
 const traverse = require('traverse')
-const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null, digits: null})
+const { AsyncRedactor } = require('redact-pii');
+//const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null, digits: null})
 const _ = require('lodash')
 
 const PATH_DESCRIPTIONS = [
@@ -11,18 +12,33 @@ const PATH_DESCRIPTIONS = [
   ['request_body', 'result', 'parameters', '*'],
   ['request_body', 'result', 'contexts', '*', 'parameters', '*'],
 
+  //alexa
+  ['event', 'request', 'intent', 'slots', '*', 'value'],
+  ['event', 'session', 'attributes', '*'],
+  ['response', 'sessionAttributes', '*'],
+
   // facebook
   ['entry', '*', 'messaging', '*', 'message', 'text'],
 
   // generic
   ['text'],
+  ['intent', 'inputs', '*', 'value'],
 
   // line
   ['message', 'text']
 ]
 
+const defaultAsyncRedactor = new AsyncRedactor({
+  builtInRedactors: {
+    digits: {
+      enabled: false
+    }
+  }
+});
+
 const redactor = {
-  redact: function(obj) {
+  redact: async (obj, customRedactor) => {
+    const asyncRedactor = customRedactor || defaultAsyncRedactor
     const paths = traverse(obj).paths()
     const matchedPaths = _.filter(paths, function(path) {
       return _.some(PATH_DESCRIPTIONS, function(pathDesc) {
@@ -39,12 +55,13 @@ const redactor = {
       return obj
     }
     const cloned = _.cloneDeep(obj)
-    _.each(matchedPaths, function(path) {
+    await Promise.all(_.map(matchedPaths, async (path) => {
       const value = _.get(cloned, path)
       if (value && _.isString(value)) {
-        _.set(cloned, path, redactorPii.redact(value))
+        const newValue = await asyncRedactor.redactAsync(value)
+        _.set(cloned, path, newValue)
       }
-    })
+    }))
     return cloned
   }
 }

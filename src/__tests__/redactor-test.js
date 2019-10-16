@@ -659,24 +659,24 @@ const redactor = require('../redactor')
 
 describe('Redactor', function() {
   describe('.redact()', function() {
-    it('should remove credit card from google call', function() {
-      const redacted = redactor.redact(GOOGLE_EXAMPLE_IN)
+    it('should remove credit card from google call', async () => {
+      const redacted = await redactor.redact(GOOGLE_EXAMPLE_IN)
       assertObject.equal(redacted, REDACTED_GOOGLE_IN)
     })
-    it('should remove credit card from incoming part of google call', function() {
-      const redacted = redactor.redact(GOOGLE_EXAMPLE_OUT)
+    it('should remove credit card from incoming part of google call', async () => {
+      const redacted = await redactor.redact(GOOGLE_EXAMPLE_OUT)
       assertObject.equal(redacted, REDACTED_GOOGLE_OUT)
     })
-    it('should remove credit card from facebook in', function() {
-      const redacted = redactor.redact(FACEBOOK_IN)
+    it('should remove credit card from facebook in', async () => {
+      const redacted = await redactor.redact(FACEBOOK_IN)
       assertObject.equal(redacted, REDACTED_FACEBOOK_IN)
     })
-    it('should remove credit card from generic in', function() {
-      const redacted = redactor.redact(GENERIC)
+    it('should remove credit card from generic in', async () => {
+      const redacted = await redactor.redact(GENERIC)
       assertObject.equal(redacted, REDACTED_GENERIC)
     })
-    it('should remove credit card from line in', function() {
-      const redacted = redactor.redact(LINE_IN)
+    it('should remove credit card from line in', async () => {
+      const redacted = await redactor.redact(LINE_IN)
       assertObject.equal(redacted, REDACTED_LINE_IN)
     })
   })

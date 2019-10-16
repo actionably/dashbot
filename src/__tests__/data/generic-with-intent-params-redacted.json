@@ -1,0 +1,20 @@
+{
+	"text": "this is some text and a PHONE_NUMBER",
+	"intent": {
+		"name": "GOOD",
+		"inputs": [
+			{
+				"name": "phone",
+				"value": "PHONE_NUMBER"
+			},
+			{
+				"name": "zip",
+				"value": "ZIPCODE"
+			},
+			{
+				"name": "just_digits",
+				"value": "1111"
+			}
+		]
+	}
+}

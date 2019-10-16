@@ -2,11 +2,16 @@
 
 const fetch = require('isomorphic-fetch')
 const redactor = require('./redactor')
+const _ = require('lodash')
 
-module.exports = function (data, printErrors, redact, timeout = 15000) {
+module.exports = async (data, printErrors, redact, timeout = 15000) => {
   let body = data.json
   if (body && redact) {
-    body = redactor.redact(body)
+    let customRedactor = null
+    if (_.isObject(redact)) {
+      customRedactor = redact
+    }
+    body = await redactor.redact(body, customRedactor)
   }
   const p = fetch(data.uri, {
     method: data.method,
