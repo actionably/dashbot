@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "10.4.5",
+  "version": "11.0.0",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
@@ -64,8 +64,8 @@
     "traverse": "0.6.6",
     "uuid": "3.0.1"
   },
-	"engines": {
-		"node" : ">=8"
-	},
-	"engineStrict" : true
+  "engines": {
+    "node": ">=8"
+  },
+  "engineStrict": true
 }
