@@ -1,3 +1,4 @@
+/* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 'use strict';
 
 if (!process.env.DASHBOT_API_KEY_SLACK) {

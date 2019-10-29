@@ -1,3 +1,4 @@
+/* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 
 const assert = require('assert');
 const http = require('http');

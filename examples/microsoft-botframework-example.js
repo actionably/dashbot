@@ -1,3 +1,4 @@
+/* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 if (!process.env.DASHBOT_API_KEY_MICROSOFT) {
   throw new Error('"DASHBOT_API_KEY_MICROSOFT" environment variable must be defined');
 }

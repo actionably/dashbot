@@ -1,3 +1,4 @@
+/* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 const traverse = require('traverse')
 const { AsyncRedactor } = require('redact-pii');
 //const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null, digits: null})
