@@ -19,7 +19,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
 
     that.assistantHandle = assistant;
 
-    // assistant/conversation library
+    // assistant/conversation library path
     if (that.configAssistantConversation(assistant, incomingMetadata)) {
       return
     }
@@ -156,50 +156,36 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
 
     // try integrating
     that
-      .attachConversationApiMiddleware(app, incomingMetadata)
-      .attachConversationApiHandler(app);
+      .setFulfillmentLib('assistant/conversation')
+      .attachConversationApiHandler(app, incomingMetadata);
+
+    return true;
   }
 
-  that.attachConversationApiHandler = function(app) {
+  that.setFulfillmentLib = function(name) {
+    that.fulfillmentLib = name;
+    return that
+  }
+
+  that.attachConversationApiHandler = function(app, incomingMetadata) {
     var _handler = app.handler.bind(app)
 
     const dashbot = async (body, headers, metadata) => {
+      that.logIncoming({ request: body,  srcLib: that.fulfillmentLib }, Object.assign(metadata, incomingMetadata))
+
       var resp = await _handler(body, headers, metadata)
-      that.logOutgoing(resp, resp.prompt, that.outgoingMetadata)
+      that.logOutgoing(
+        { request: body,  fulfillmentLib: that.fulfillmentLib },
+        { response: resp,  fulfillmentLib: that.fulfillmentLib },
+        Object.assign(metadata, that.outgoingMetadata)
+      );
 
-      console.log(body);
-
+      that.outgoingMetadata = null
+      that.outgoingIntent = null
       return resp
     }
 
     app.handler = dashbot
-    return that
-  }
-
-  that.attachConversationApiMiddleware =  function(app, incomingMetadata) {
-    var _middleware = (conv, metadata) => {
-      var msg = conv.intent.query
-      var intent = conv.intent
-      var session = conv.session
-      var user = conv.user;
-      var device = conv.device;
-
-      var body = {
-        text: msg,
-        intent,
-        session,
-        user,
-        device
-      }
-
-      console.log(body);
-
-      that.logIncoming(body, incomingMetadata)
-
-      return conv
-    }
-
-    app.middleware(_middleware);
     return that
   }
 
