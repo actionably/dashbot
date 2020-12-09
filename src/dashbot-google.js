@@ -1,7 +1,6 @@
 /* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 'use strict'
 
-var _ = require('lodash');
 var makeRequest = require('./make-request')
 var DashBotBase = require('./dashbot-base');
 
@@ -17,9 +16,15 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     if (assistant == null) {
       throw new Error('YOU MUST SUPPLY THE ASSISTANT OBJECT TO DASHBOT!');
     }
+
     that.assistantHandle = assistant;
 
-  if (typeof assistant.doResponse_ !== 'undefined') {
+    // assistant/conversation library
+    if (that.configAssistantConversation(assistant, incomingMetadata)) {
+      return
+    }
+
+    if (typeof assistant.doResponse_ !== 'undefined') {
       that.assistantHandle.originalDoResponse = assistant.doResponse_;
       that.assistantHandle.doResponse_ = dashbotDoResponse;
       that.requestBody = assistant.body_;
@@ -30,7 +35,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       that.assistantHandle.client.sendJson_ = dashbotSend;
       that.requestBody = assistant.request_.body;
       that.logIncoming(assistant.request_.body, incomingMetadata);
-  } else {
+    } else {
       that.assistantHandle.originalhandler = assistant.handler.bind(assistant);
       that.assistantHandle.handler = dashbotDoResponseV2;
       that.incomingMetadata = incomingMetadata
@@ -134,7 +139,72 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     internalLogOutgoing(data, 'npm');
   };
 
+  that.configAssistantConversation = function(app, incomingMetadata) {
+    if (typeof app.handler === 'undefined') {
+      return false
+    }
+
+    try {
+      require('@assistant/conversation');
+    } catch (e) {
+      if (e.code !== 'MODULE_NOT_FOUND') {
+        throw e
+      }
+
+      return false
+    }
+
+    // try integrating
+    that
+      .attachConversationApiMiddleware(app, incomingMetadata)
+      .attachConversationApiHandler(app);
+  }
+
+  that.attachConversationApiHandler = function(app) {
+    var _handler = app.handler.bind(app)
+
+    const dashbot = async (body, headers, metadata) => {
+      var resp = await _handler(body, headers, metadata)
+      that.logOutgoing(resp, resp.prompt, that.outgoingMetadata)
+
+      console.log(body);
+
+      return resp
+    }
+
+    app.handler = dashbot
+    return that
+  }
+
+  that.attachConversationApiMiddleware =  function(app, incomingMetadata) {
+    var _middleware = (conv, metadata) => {
+      var msg = conv.intent.query
+      var intent = conv.intent
+      var session = conv.session
+      var user = conv.user;
+      var device = conv.device;
+
+      var body = {
+        text: msg,
+        intent,
+        session,
+        user,
+        device
+      }
+
+      console.log(body);
+
+      that.logIncoming(body, incomingMetadata)
+
+      return conv
+    }
+
+    app.middleware(_middleware);
+    return that
+  }
+
   return that;
 }
+
 
 module.exports = DashBotGoogle;
