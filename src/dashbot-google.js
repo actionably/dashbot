@@ -156,7 +156,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
 
     // try integrating
     that
-      .setFulfillmentLib('assistant/conversation')
+      .setFulfillmentLib('@assistant/conversation')
       .attachConversationApiHandler(app, incomingMetadata)
       .attachDashbotHandle(app)
 
