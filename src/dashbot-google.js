@@ -157,9 +157,15 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     // try integrating
     that
       .setFulfillmentLib('assistant/conversation')
-      .attachConversationApiHandler(app, incomingMetadata);
+      .attachConversationApiHandler(app, incomingMetadata)
+      .attachDashbotHandle(app)
 
     return true;
+  }
+
+  that.attachDashbotHandle = function(app) {
+    app.handle('dashbot', () => {})
+    return that
   }
 
   that.setFulfillmentLib = function(name) {
