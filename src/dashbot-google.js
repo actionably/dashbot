@@ -71,7 +71,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
-      console.log(JSON.stringify(data, null, 2));
+      console.log(JSON.stringify(util.inspect(data, {showHidden: false, depth: null})));
     }
     return makeRequest({
       uri: url,
@@ -85,7 +85,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
-      console.log(JSON.stringify(data, null, 2));
+      console.log(JSON.stringify(util.inspect(data, {showHidden: false, depth: null})));
     }
     return makeRequest({
       uri: url,
@@ -164,7 +164,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
   }
 
   that.attachDashbotHandle = function(app) {
-    app.handle('dashbot', () => {})
+    app.handle('dashbot', conv => { return conv })
     return that
   }
 
@@ -177,13 +177,13 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     var _handler = app.handler.bind(app)
 
     const dashbot = async (body, headers, metadata) => {
-      that.logIncoming({ request: body,  srcLib: that.fulfillmentLib }, Object.assign(metadata, incomingMetadata))
+      that.logIncoming({ request: body,  srcLib: that.fulfillmentLib }, incomingMetadata)
 
       var resp = await _handler(body, headers, metadata)
       that.logOutgoing(
         { request: body,  fulfillmentLib: that.fulfillmentLib },
         { response: resp,  fulfillmentLib: that.fulfillmentLib },
-        Object.assign(metadata, that.outgoingMetadata)
+        that.outgoingMetadata
       );
 
       that.outgoingMetadata = null
