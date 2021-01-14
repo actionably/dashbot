@@ -3,7 +3,6 @@
 
 var makeRequest = require('./make-request')
 var DashBotBase = require('./dashbot-base');
-
 var VERSION = require('../package.json').version;
 
 function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
@@ -71,7 +70,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       that.apiKey + '&type=incoming&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Incoming: ' + url);
-      console.log(JSON.stringify(util.inspect(data, {showHidden: false, depth: null})));
+      console.log(JSON.stringify(data, null, 2));
     }
     return makeRequest({
       uri: url,
@@ -85,7 +84,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
       that.apiKey + '&type=outgoing&platform=' + that.platform + '&v=' + VERSION + '-' + source;
     if (that.debug) {
       console.log('Dashbot Outgoing: ' + url);
-      console.log(JSON.stringify(util.inspect(data, {showHidden: false, depth: null})));
+      console.log(JSON.stringify(data, null, 2));
     }
     return makeRequest({
       uri: url,
