@@ -176,7 +176,7 @@ function DashBotGoogle(apiKey, urlRoot, debug, printErrors, config) {
     var _handler = app.handler.bind(app)
 
     const dashbot = async (body, headers, metadata) => {
-      that.logIncoming({ request: body,  srcLib: that.fulfillmentLib }, incomingMetadata)
+      that.logIncoming({ request: body,  fulfillmentLib: that.fulfillmentLib }, incomingMetadata)
 
       var resp = await _handler(body, headers, metadata)
       that.logOutgoing(
