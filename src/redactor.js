@@ -1,6 +1,5 @@
 /* Copyright (c) 2016-2019 Dashbot Inc All rights reserved */
 const traverse = require('traverse')
-const { AsyncRedactor } = require('redact-pii');
 //const redactorPii = require('redact-pii')({salutation: null, valediction: null, name: null, digits: null})
 const _ = require('lodash')
 
@@ -29,22 +28,35 @@ const PATH_DESCRIPTIONS = [
   ['message', 'text']
 ]
 
-const defaultAsyncRedactor = new AsyncRedactor({
-  builtInRedactors: {
-    digits: {
-      enabled: false
+function loadDefaultRedactor() {
+  try {
+    const {AsyncRedactor} = require('redact-pii');
+    const defaultAsyncRedactor = new AsyncRedactor({
+      builtInRedactors: {
+        digits: {
+          enabled: false
+        }
+      }
+    });
+    return defaultAsyncRedactor;
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e;
     }
+    console.error(e)
+    console.log('Resuming sending message to Dashbot. \nPlease install redact-pii to use the redaction feature.')
+    return null;
   }
-});
+}
 
 const redactor = {
   redact: async (obj, customRedactor) => {
-    const asyncRedactor = customRedactor || defaultAsyncRedactor
+    const asyncRedactor = customRedactor || loadDefaultRedactor()
     const paths = traverse(obj).paths()
     const matchedPaths = _.filter(paths, function(path) {
       return _.some(PATH_DESCRIPTIONS, function(pathDesc) {
         if (pathDesc.length !== path.length) {
-          return false   
+          return false
         } else {
           return _.every(pathDesc, function(pathFragment, i) {
             return (pathFragment === '*' || pathFragment === path[i])
@@ -52,7 +64,7 @@ const redactor = {
         }
       })
     })
-    if (!matchedPaths.length) {
+    if (!matchedPaths.length || !asyncRedactor) {
       return obj
     }
     const cloned = _.cloneDeep(obj)

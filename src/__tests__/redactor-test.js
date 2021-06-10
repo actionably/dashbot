@@ -681,4 +681,8 @@ describe('Redactor', function() {
       assertObject.equal(redacted, REDACTED_LINE_IN)
     })
   })
+
+  it('should quietly fail if there is no redaction library', async () => {
+
+  })
 })

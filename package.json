@@ -41,8 +41,8 @@
   },
   "homepage": "https://github.com/actionably/dashbot#readme",
   "devDependencies": {
-    "@line/bot-sdk": "6.8.2",
-    "actions-on-google": "1.5.1",
+    "@line/bot-sdk": "^7.3.0",
+    "actions-on-google": "^2.14.0",
     "assert": "1.4.1",
     "assert-object": "1.0.0",
     "body-parser": "1.19.0",
@@ -50,19 +50,22 @@
     "circular-json": "0.3.0",
     "dotenv": "2.0.0",
     "express": "4.17.1",
-    "mocha": "6.2.0",
-    "nodemon": "1.19.2",
+    "mocha": "^6.2.3",
+    "nodemon": "^2.0.7",
+    "redact-pii": "^3.2.3",
     "websocket": "1.0.23"
   },
   "dependencies": {
-    "dashbot-logger": "^1.0.4",
     "es6-promise": "4.1.0",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "meld": "1.3.2",
-    "redact-pii": "^3.2.3",
     "traverse": "0.6.6",
     "uuid": "3.0.1"
+  },
+  "peerDependencies": {
+    "redact-pii": "^3.2.3",
+    "dashbot-logger": "^1.1.2"
   },
   "engines": {
     "node": ">=8"

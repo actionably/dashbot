@@ -3,9 +3,7 @@
 
 var _ = require('lodash');
 var meld = require('meld');
-
 var DashBotBase = require('./dashbot-base');
-var DashbotLogger = require('dashbot-logger');
 
 var VERSION = require('../package.json').version;
 
@@ -180,7 +178,7 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
     config.debug = _.has(config, 'debug') ? config.debug : that.debug;
     config.printErrors = _.has(config, 'printErrors') ? config.printErrors : that.printErrors;
 
-    that.dashbotLogger = new DashbotLogger(config);
+    that.dashbotLogger = loadDashbotLogger(config)
 
     return that
   }
@@ -188,6 +186,21 @@ function DashBotAmazonAlexa(apiKey, urlRoot, debug, printErrors, config) {
   return that;
 }
 
+
+function loadDashbotLogger(config) {
+  try {
+    var DashbotLogger = require('dashbot-logger');
+    var logger = new DashbotLogger(config)
+    return logger;
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e;
+    }
+    console.error(e)
+    console.log('Resuming sending message to Dashbot. \nPlease install dashbot-logger for the log integration.')
+    return null;
+  }
+}
 
 // remove circular properties from LambdaContext
 // as defined by bespoken-tools
