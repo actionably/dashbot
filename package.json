@@ -1,6 +1,6 @@
 {
   "name": "dashbot",
-  "version": "11.2.5",
+  "version": "12.0.0",
   "description": "Analytics for your bot",
   "main": "src/dashbot.js",
   "repository": {
