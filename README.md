@@ -32,3 +32,10 @@ The following are the available configuration keys:
 ***debug*** - ```boolean``` logs helpful debugging information  
 ***redact*** - ```boolean``` removes personally identifiable information using redact-pii (more info [here](https://www.dashbot.io/docs/pii-redaction/))  
 ***timeout*** - ```number``` timeouts requests after given milliseconds
+
+
+## What's New
+
+### dashbot@next (v12.0.0)
+- removed dependencies redact-pii and dashbot-logger
+    - clients will now have to install these packages separately in order to use the redact option or the alexa log integration
