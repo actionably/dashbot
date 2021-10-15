@@ -11,6 +11,7 @@
     "facebook": "nodemon -r dotenv/config examples/facebook-example.js",
     "universal": "nodemon -r dotenv/config examples/universal-example.js",
     "webchat": "nodemon -r dotenv/config examples/webchat-example.js",
+    "botcopy": "nodemon -r dotenv/config examples/botcopy-example.js",
     "kik": "nodemon -r dotenv/config examples/kik-example-npm.js",
     "slack": "nodemon -r dotenv/config examples/slack-example.js",
     "microsoft": "nodemon -r dotenv/config examples/microsoft-botframework-example.js",
